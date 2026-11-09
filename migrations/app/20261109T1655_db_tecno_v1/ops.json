@@ -1,0 +1,189 @@
+[
+  {
+    "id": "column.public.Orden.ajustePrecio",
+    "label": "Add column \"ajustePrecio\" to \"Orden\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "ajustePrecio",
+        "table": "Orden"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"ajustePrecio\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Orden",
+          "ajustePrecio"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"ajustePrecio\" on \"Orden\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"ajustePrecio\"",
+        "sql": "ALTER TABLE \"public\".\"Orden\" ADD COLUMN \"ajustePrecio\" float8 DEFAULT 0 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"ajustePrecio\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Orden",
+          "ajustePrecio"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"ajustePrecio\" on \"Orden\""
+        }
+      },
+      {
+        "description": "verify column \"ajustePrecio\" has type \"double precision\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Orden",
+          "ajustePrecio",
+          "double precision"
+        ]
+      },
+      {
+        "description": "verify column \"ajustePrecio\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Orden",
+          "ajustePrecio",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Orden.tipoAjuste",
+    "label": "Add column \"tipoAjuste\" to \"Orden\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "tipoAjuste",
+        "table": "Orden"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"tipoAjuste\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Orden",
+          "tipoAjuste"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"tipoAjuste\" on \"Orden\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"tipoAjuste\"",
+        "sql": "ALTER TABLE \"public\".\"Orden\" ADD COLUMN \"tipoAjuste\" text DEFAULT 'NORMAL' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"tipoAjuste\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Orden",
+          "tipoAjuste"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"tipoAjuste\" on \"Orden\""
+        }
+      },
+      {
+        "description": "verify column \"tipoAjuste\" has type \"text\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Orden",
+          "tipoAjuste",
+          "text"
+        ]
+      },
+      {
+        "description": "verify column \"tipoAjuste\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Orden",
+          "tipoAjuste",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Orden.Orden_tipoAjuste_check_15f30b65",
+    "label": "Add check constraint \"Orden_tipoAjuste_check_15f30b65\" on \"Orden\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Orden_tipoAjuste_check_15f30b65",
+        "table": "Orden"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Orden_tipoAjuste_check_15f30b65\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Orden_tipoAjuste_check_15f30b65",
+          "public",
+          "\"public\".\"Orden\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Orden_tipoAjuste_check_15f30b65\" on \"Orden\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Orden_tipoAjuste_check_15f30b65\"",
+        "sql": "ALTER TABLE \"public\".\"Orden\" ADD CONSTRAINT \"Orden_tipoAjuste_check_15f30b65\" CHECK (\"tipoAjuste\" IN ('DESCUENTO', 'RECARGO', 'NORMAL'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify check constraint \"Orden_tipoAjuste_check_15f30b65\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4)) AS \"result\"",
+        "params": [
+          "Orden_tipoAjuste_check_15f30b65",
+          "public",
+          "\"public\".\"Orden\"",
+          "c"
+        ]
+      }
+    ]
+  }
+]
