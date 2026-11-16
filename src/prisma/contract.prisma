@@ -1,29 +1,34 @@
 // use prisma-8
-model Usuarios {
-  id         Int                @id @default(autoincrement())
-  username   String             @unique
-  password   String
-  avatar     String?
-  activo     Boolean            @default(true)
-
-  personasId Int
-  personas   Personas           @relation(fields: [personasId], references: [id])
-  createdAt  DateTime           @default(now()) @onCreate(now())
-  updatedAt  temporal.UpdatedAt
+enum Rol {
+  ADMINISTRADOR
+  TECNICO
+  RECEPCIONISTA
+  GERENTE
 }
 
-model Personas {
+model Usuarios {
   id        Int                @id @default(autoincrement())
   nombre    String
-  apellido  String
-  dni       String             @unique
-  ciudad    String
-  direccion String
-  usuarios  Usuarios[]
-  contactos Contactos[]
-  clientes  Clientes[]
+  DNI       String             @unique
+  username  String             @unique
+  password  String
+  avatar    String?
+  activo    Boolean            @default(true)
+  rol       Rol
   createdAt DateTime           @default(now()) @onCreate(now())
   updatedAt temporal.UpdatedAt
+
+  recepcion Orden[]            @relation("recepcionista")
+  tecnico   Orden[]            @relation("tecnico")
+}
+
+model Clientes {
+  id           Int            @id @default(autoincrement())
+  nombre       String
+  ciudad       String
+  direccion    String?
+  contactos    Contactos[]
+  dispositivos Dispositivos[]
 }
 
 enum TipoContacto {
@@ -41,18 +46,11 @@ model Contactos {
   tipo      TipoContacto       @default(TELEFONO)
   valor     String             @unique
   principal Boolean            @default(false)
-
-  personaId Int
-  persona   Personas           @relation(fields: [personaId], references: [id])
   createdAt DateTime           @default(now()) @onCreate(now())
   updatedAt temporal.UpdatedAt
-}
 
-model Clientes {
-  id           Int            @id @default(autoincrement())
-  personaId    Int
-  persona      Personas       @relation(fields: [personaId], references: [id])
-  dispositivos Dispositivos[]
+  clienteId Int
+  cliente   Clientes           @relation(fields: [clienteId], references: [id])
 }
 
 enum TipoDispotivo {
@@ -68,29 +66,16 @@ enum TipoDispotivo {
 }
 
 model Dispositivos {
-  id           Int           @id @default(autoincrement())
-  nroSerie     String        @unique
-  marca        String
-  modelo       String
-  imgUrl       String?
-  estadoFisico String?
+  id        Int           @id @default(autoincrement())
+  tipo      TipoDispotivo @default(OTRO)
+  marca     String
+  modelo    String
+  nroSerie  String?       @unique
+  imgUrl    String?
 
-  tipo         TipoDispotivo @default(OTRO)
-  clienteId    Int
-  cliente      Clientes      @relation(fields: [clienteId], references: [id])
-}
-
-enum RolEmpleado {
-  ADMIN
-  RECEPCION
-  TECNICO
-}
-
-model Empleados {
-  id        Int         @id @default(autoincrement())
-  personaId Int
-  persona   Personas    @relation(fields: [personaId], references: [id])
-  rol       RolEmpleado @default(RECEPCION)
+  clienteId Int
+  cliente   Clientes      @relation(fields: [clienteId], references: [id])
+  ordenes   Orden[]
 }
 
 enum Prioridad {
@@ -110,32 +95,51 @@ enum EstadoOrden {
   ENTREGADO
 }
 
-enum TipoAjuste {
-  DESCUENTO
-  RECARGO
-  NORMAL
+enum EstadoPago {
+  PENDIENTE
+  PAGADO
+}
+
+enum MetodoPago {
+  EFECTIVO
+  TARJETA
+  QR
 }
 
 model Orden {
-  id            Int            @id @default(autoincrement())
-  codigoOrden   String         @unique
-  prioridad     Prioridad      @default(BAJA)
-  ajustePrecio  Float          @default(0.0)
-  tipoAjuste    TipoAjuste     @default(NORMAL)
-  estado        EstadoOrden    @default(RECIBIDO)
-  observaciones String?
-  fechaIngreso  DateTime       @default(now()) @onCreate(now())
-  fechaEstimada DateTime?
-  fechaEntrega  DateTime?
+  id                   Int                  @id @default(autoincrement())
+  codigo               String               @unique
+  codigoCliente        String               @unique
+  fechaIngreso         DateTime             @default(now()) @onCreate(now())
+  problemasReportados  String
+  condicionDispositivo String?
+  accesoriosRecibidos  String?
+  prioridad            Prioridad            @default(BAJA)
+  estado               EstadoOrden          @default(RECIBIDO)
+  diagnostico          String?
+  fechaEstimada        DateTime?
+  fechaFinalizacion    DateTime?
+  fechaEntrega         DateTime?
+  trabajoVerficado     Boolean              @default(false)
+  entregaConfirmada    Boolean              @default(false)
+  observaciones        String?
+  descuentoAplicado    NumericString(10, 2) @default(0.00)
+  estadoPago           EstadoPago           @default(PENDIENTE)
+  metodoPago           MetodoPago           @default(EFECTIVO)
+  fechaPago            DateTime?
 
-  tecnicoId     Int?
-  empleado      Empleados?     @relation(fields: [tecnicoId], references: [id])
-  dispositivoId Int
-  dispositivo   Dispositivos   @relation(fields: [dispositivoId], references: [id])
+  tecnicoId            Int?
+  tecnico              Usuarios?            @relation('tecnico', fields: [tecnicoId], references: [id])
+  recepcionistaId      Int
+  recepcion            Usuarios             @relation('recepcionista', fields: [recepcionistaId], references: [id])
+  dispositivoId        Int
+  dispositivo          Dispositivos         @relation(fields: [dispositivoId], references: [id])
+  servicioSolicitadoId Int?
+  servicio             Servicios?           @relation(fields: [servicioSolicitadoId], references: [id])
 
-  actividades   Actividades[]
-  problemas     Problemas[]
-  diagnosticos  Diagnosticos[]
+  actividades          Actividades[]
+  movimientos          Movimientos[]
+  presupuestos         Presupuestos[]
 }
 
 enum EstadoProcesos {
@@ -145,60 +149,65 @@ enum EstadoProcesos {
   CANCELADO
 }
 
-model Actividades {
-  id             Int            @id @default(autoincrement())
-  precioAplicado Float          @default(0.0)
-  estado         EstadoProcesos @default(PENDIENTE)
-  observaciones  String?
-  fecha          DateTime       @default(now()) @onCreate(now())
-
-  ordenId        Int
-  orden          Orden          @relation(fields: [ordenId], references: [id])
-  servicioId     Int
-  servicio       Servicios      @relation(fields: [servicioId], references: [id])
-}
-
 model Servicios {
-  id          Int           @id @default(autoincrement())
-  nombre      String        @unique
-  descripcion String?
-  costoBase   Float         @default(0.0)
+  id                 Int                  @id @default(autoincrement())
+  nombre             String               @unique
+  descripcion        String?
+  precioReferencial  NumericString(10, 2) @default(0.00)
+  activo             Boolean              @default(true)
 
-  actividades Actividades[]
+  actividades        Actividades[]
+  detallePresupuesto DetallePresupuesto[]
 }
 
-model Problemas {
-  id          Int     @id @default(autoincrement())
-  ordenId     Int
-  orden       Orden   @relation(fields: [ordenId], references: [id])
-  descripcion String?
-}
-
-model Diagnosticos {
-  id                Int            @id @default(autoincrement())
-  solucionPropuesta String
-  costoEstimado     Float          @default(0.0)
-  estado            EstadoProcesos @default(PENDIENTE)
+model Actividades {
+  id                Int                  @id @default(autoincrement())
+  fechaInicio       DateTime?
+  fechaFinalizacion DateTime?
+  estado            EstadoProcesos       @default(PENDIENTE)
+  observaciones     String?
+  precioUnitario    NumericString(10, 2) @default(0.00)
 
   ordenId           Int
-  orden             Orden          @relation(fields: [ordenId], references: [id])
-
-  aprobaciones      Aprobaciones[]
+  orden             Orden                @relation(fields: [ordenId], references: [id])
+  servicioId        Int
+  servicio          Servicios            @relation(fields: [servicioId], references: [id])
 }
 
-enum Decision {
+enum EstadoPresupuesto {
+  PENDIENTE_APROBACION
   APROBADO
   RECHAZADO
+  CANCELADO
 }
 
-model Aprobaciones {
-  id             Int          @id @default(autoincrement())
-  decision       Decision
-  observaciones  String?
-  fechaRespuesta DateTime     @default(now()) @onCreate(now())
+model Presupuestos {
+  id                 Int                  @id @default(autoincrement())
+  version            Int                  @default(1)
+  fechaRegistro      DateTime             @default(now()) @onCreate(now())
+  fechaVencimiento   DateTime?
+  estado             EstadoPresupuesto    @default(PENDIENTE_APROBACION)
+  fechaRespuesta     DateTime?
+  observaciones      String?
 
-  diagnosticoId  Int
-  diagnostico    Diagnosticos @relation(fields: [diagnosticoId], references: [id])
+  ordenId            Int
+  orden              Orden                @relation(fields: [ordenId], references: [id])
+
+  detallePresupuesto DetallePresupuesto[]
+}
+
+model DetallePresupuesto {
+  id             Int                  @id @default(autoincrement())
+  cantidad       Int                  @default(1)
+  precioUnitario NumericString(10, 2) @default(0.00)
+  descripcion    String?
+
+  presupuestoId  Int
+  presupuesto    Presupuestos         @relation(fields: [presupuestoId], references: [id])
+  servicioId     Int
+  servicio       Servicios            @relation(fields: [servicioId], references: [id])
+  repuestoId     Int?
+  repuesto       Repuestos?           @relation(fields: [repuestoId], references: [id])
 }
 
 enum EstadoRepuesto {
@@ -214,59 +223,54 @@ model Repuestos {
   nombre             String
   unidadesCaja       Int                  @default(0)
   imgUrl             String?
+  precioReferencial  NumericString(10, 2) @default(0.00)
+  costoActual        NumericString(10, 2) @default(0.00)
   estado             EstadoRepuesto       @default(DISPONIBLE)
-  precioActual       Float                @default(0.0)
   createdAt          DateTime             @default(now()) @onCreate(now())
   updatedAt          temporal.UpdatedAt
 
   detalleMovimientos DetalleMovimientos[]
-  detalleRepuestos   DetalleRepuestos[]
   inventario         Inventario[]
-}
-
-model DetalleRepuestos {
-  id                Int       @id @default(autoincrement())
-  precioInstalacion Float     @default(0.0)
-  cantidad          Int       @default(1)
-
-  repuestoId        Int
-  repuesto          Repuestos @relation(fields: [repuestoId], references: [id])
-  ordenId           Int
-  orden             Orden     @relation(fields: [ordenId], references: [id])
-}
-
-model Inventario {
-  id          Int                @id @default(autoincrement())
-  repuestoId  Int
-  repuesto    Repuestos          @relation(fields: [repuestoId], references: [id])
-  stock       Int                @default(0)
-  stockMinimo Int                @default(0)
-  updatedAt   temporal.UpdatedAt
 }
 
 enum TipoMovimiento {
   ENTRADA
   SALIDA
   SALIDA_REPARACION
-  TRANSFERENCIA
+  SALIDA_VENTA
+  AJUSTE_POSITIVO
+  AJUSTE_NEGATIVO
 }
 
 model Movimientos {
   id                 Int                  @id @default(autoincrement())
   tipo               TipoMovimiento       @default(SALIDA)
-  observaciones      String?
   fecha              DateTime             @default(now()) @onCreate(now())
+  observaciones      String?
 
   detalleMovimientos DetalleMovimientos[]
+  ordenId            Int?
+  orden              Orden?               @relation(fields: [ordenId], references: [id])
+  updatedAt          temporal.UpdatedAt
 }
 
 model DetalleMovimientos {
-  id             Int         @id @default(autoincrement())
-  cantidad       Int         @default(1)
-  precioUnitario Float       @default(0.0)
+  id             Int                   @id @default(autoincrement())
+  cantidad       Int
+  costoUnitario  NumericString(10, 2)  @default(0.00)
+  precioUnitario NumericString(10, 2)? @default(0.00)
 
   movimientoId   Int
-  movimiento     Movimientos @relation(fields: [movimientoId], references: [id])
+  movimiento     Movimientos           @relation(fields: [movimientoId], references: [id])
   repuestoId     Int
-  repuesto       Repuestos   @relation(fields: [repuestoId], references: [id])
+  repuesto       Repuestos             @relation(fields: [repuestoId], references: [id])
+}
+
+model Inventario {
+  id          Int                @id @default(autoincrement())
+  repuestoId  Int                @unique()
+  repuesto    Repuestos          @relation(fields: [repuestoId], references: [id])
+  stock       Int                @default(0)
+  stockMinimo Int                @default(0)
+  updatedAt   temporal.UpdatedAt
 }
