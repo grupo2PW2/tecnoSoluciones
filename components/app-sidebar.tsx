@@ -48,16 +48,19 @@ const navigation = [
         title: "Clientes",
         url: "/clientes",
         icon: Users,
+        allowedRoles: ["ADMINISTRADOR", "RECEPCIONISTA"],
       },
       {
         title: "Dispositivos",
         url: "/dispositivos",
         icon: MonitorSmartphone,
+        allowedRoles: ["ADMINISTRADOR", "RECEPCIONISTA"],
       },
       {
         title: "Órdenes",
         url: "/ordenes",
         icon: ClipboardList,
+        allowedRoles: ["ADMINISTRADOR", "RECEPCIONISTA"],
       },
     ],
   },
@@ -68,16 +71,19 @@ const navigation = [
         title: "Diagnósticos",
         url: "/diagnosticos",
         icon: Stethoscope,
+        allowedRoles: ["ADMINISTRADOR", "TECNICO"],
       },
       {
         title: "Presupuestos",
         url: "/presupuestos",
         icon: ReceiptText,
+        allowedRoles: ["ADMINISTRADOR", "TECNICO"],
       },
       {
         title: "Servicios",
         url: "/servicios",
         icon: Wrench,
+        allowedRoles: ["ADMINISTRADOR", "RECEPCIONISTA"],
       },
     ],
   },
@@ -88,16 +94,19 @@ const navigation = [
         title: "Repuestos",
         url: "/repuestos",
         icon: Package,
+        allowedRoles: ["ADMINISTRADOR", "RECEPCIONISTA"],
       },
       {
         title: "Inventario",
         url: "/inventario",
         icon: Warehouse,
+        allowedRoles: ["ADMINISTRADOR", "RECEPCIONISTA"],
       },
       {
         title: "Movimientos",
         url: "/movimientos",
         icon: ArrowLeftRight,
+        allowedRoles: ["ADMINISTRADOR", "RECEPCIONISTA"],
       },
     ],
   },
@@ -108,14 +117,16 @@ const navigation = [
         title: "Usuarios",
         url: "/usuarios",
         icon: UserCog,
+        allowedRoles: ["ADMINISTRADOR"],
       },
     ],
   },
 ];
 
 export function AppSidebar({
+  role,
   ...props
-}: React.ComponentProps<typeof Sidebar>) {
+}: React.ComponentProps<typeof Sidebar> & { role: string }) {
   const pathname = usePathname();
 
   return (
@@ -148,7 +159,16 @@ export function AppSidebar({
       </SidebarHeader>
 
       <SidebarContent>
-        {navigation.map((group) => (
+        {navigation.map((group) => {
+          const visibleItems = group.items.filter(
+            (item) => !item.allowedRoles || item.allowedRoles.includes(role),
+          );
+
+          if (visibleItems.length === 0) {
+            return null;
+          }
+
+          return (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel>
               {group.title}
@@ -156,7 +176,7 @@ export function AppSidebar({
 
             <SidebarGroupContent>
               <SidebarMenu>
-                {group.items.map((item) => {
+                {visibleItems.map((item) => {
                   const isActive =
                     pathname === item.url ||
                     pathname.startsWith(`${item.url}/`);
@@ -177,7 +197,8 @@ export function AppSidebar({
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-        ))}
+          );
+        })}
       </SidebarContent>
     </Sidebar>
   );

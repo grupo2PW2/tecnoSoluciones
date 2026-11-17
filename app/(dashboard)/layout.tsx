@@ -13,14 +13,14 @@ export default async function PanelLayout({
   children: React.ReactNode;
 }) {
   await connection();
-  await requireUser();
+  const user = await requireUser();
 
   return (
     <div className="[--header-height:calc(--spacing(14))]">
       <SidebarProvider className="flex flex-col">
         <SiteHeader />
         <div className="flex flex-1">
-          <AppSidebar />
+          <AppSidebar role={user.rol} />
           <SidebarInset>
             <main>{children}</main>
           </SidebarInset>

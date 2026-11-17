@@ -13,10 +13,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useSidebar } from "@/components/ui/sidebar"
+import { usePathname } from "next/navigation"
 import { LogOut, PanelLeftIcon } from "lucide-react"
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar()
+  const pathname = usePathname()
+  const breadcrumb = getBreadcrumb(pathname)
 
   return (
     <header className="sticky top-0 z-50 flex w-full items-center border-b bg-background">
@@ -37,11 +40,11 @@ export function SiteHeader() {
         <Breadcrumb className="hidden sm:block">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="#">Build Your Application</BreadcrumbLink>
+              <BreadcrumbLink href="/dashboard">Panel</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+              <BreadcrumbPage>{breadcrumb}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -54,4 +57,22 @@ export function SiteHeader() {
       </div>
     </header>
   )
+}
+
+function getBreadcrumb(pathname: string) {
+  const labels: Record<string, string> = {
+    dashboard: "Dashboard",
+    clientes: "Clientes",
+    dispositivos: "Dispositivos",
+    ordenes: "Órdenes",
+    diagnosticos: "Diagnósticos",
+    presupuestos: "Presupuestos",
+    servicios: "Servicios",
+    repuestos: "Repuestos",
+    inventario: "Inventario",
+    movimientos: "Movimientos",
+    usuarios: "Usuarios",
+  }
+  const segment = pathname.split("/").filter(Boolean)[0]
+  return segment ? labels[segment] ?? "Panel" : "Dashboard"
 }

@@ -1,9 +1,12 @@
+import { connection } from "next/server";
+
 import { OrderManagement } from "@/components/order-management";
 import { OrderPayment } from "@/components/order-payment";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/src/prisma/db";
 
 export default async function OrdenPage() {
+  await connection();
   const currentUser = await requireUser();
 
   if (currentUser.rol !== "ADMINISTRADOR" && currentUser.rol !== "RECEPCIONISTA") {

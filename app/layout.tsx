@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Titillium_Web } from "next/font/google";
+import { Titillium_Web } from "next/font/google";
 import "./globals.css";
 
 const titillium = Titillium_Web({
