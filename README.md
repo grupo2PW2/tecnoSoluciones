@@ -38,5 +38,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Pasos de migracion prisma
 - editar src/prisma/contract.prisma
 - npx prisma contract emit
-- npx prisma migration plan --name <name>
+- npx prisma migration plan --name tecno_db_v1
 - npx prisma db migrate --advance-ref db

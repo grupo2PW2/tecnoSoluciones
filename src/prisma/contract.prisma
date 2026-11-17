@@ -194,6 +194,8 @@ model Presupuestos {
   orden              Orden                @relation(fields: [ordenId], references: [id])
 
   detallePresupuesto DetallePresupuesto[]
+
+  @@unique([ordenId, version])
 }
 
 model DetallePresupuesto {
@@ -204,10 +206,15 @@ model DetallePresupuesto {
 
   presupuestoId  Int
   presupuesto    Presupuestos         @relation(fields: [presupuestoId], references: [id])
-  servicioId     Int
-  servicio       Servicios            @relation(fields: [servicioId], references: [id])
+  servicioId     Int?
+  servicio       Servicios?           @relation(fields: [servicioId], references: [id])
   repuestoId     Int?
   repuesto       Repuestos?           @relation(fields: [repuestoId], references: [id])
+
+  @@check(
+    expression: sql`("servicioId" IS NOT NULL AND "repuestoId" IS NULL) OR ("servicioId" IS NULL AND "repuestoId" IS NOT NULL)`,
+    name: "detalle_presupuesto_un_concepto",
+  )
 }
 
 enum EstadoRepuesto {

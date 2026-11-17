@@ -1,13 +1,38 @@
-export default function DispositivoPage() {
+import { DeviceManagement } from "@/components/device-management";
+import { requireUser } from "@/lib/auth";
+import { db } from "@/src/prisma/db";
+
+export default async function DispositivoPage() {
+  const currentUser = await requireUser();
+
+  if (currentUser.rol !== "ADMINISTRADOR" && currentUser.rol !== "RECEPCIONISTA") {
+    return (
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <h1 className="text-xl font-semibold">Gestión de dispositivos</h1>
+        <p className="text-sm text-muted-foreground">
+          Solo recepción y administración pueden gestionar dispositivos.
+        </p>
+      </div>
+    );
+  }
+
+  const [devices, clients] = await Promise.all([
+    db.orm.public.Dispositivos
+      .select("id", "tipo", "marca", "modelo", "nroSerie", "imgUrl", "clienteId")
+      .include("cliente", (cliente) => cliente.select("id", "nombre"))
+      .all(),
+    db.orm.public.Clientes.select("id", "nombre").all(),
+  ]);
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <h1>Gestion de dispositivos</h1>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
+      <div>
+        <h1 className="text-xl font-semibold">Gestión de dispositivos</h1>
+        <p className="text-sm text-muted-foreground">
+          Registra los equipos recibidos y sus propietarios.
+        </p>
       </div>
-      <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+      <DeviceManagement devices={devices} clients={clients} />
     </div>
   );
 }

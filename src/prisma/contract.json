@@ -224,25 +224,8 @@
                 "value": "RECEPCIONISTA"
               },
               {
-                "name": "ALMACENISTA",
-                "value": "ALMACENISTA"
-              }
-            ]
-          },
-          "TipoAjuste": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "DESCUENTO",
-                "value": "DESCUENTO"
-              },
-              {
-                "name": "RECARGO",
-                "value": "RECARGO"
-              },
-              {
-                "name": "NORMAL",
-                "value": "NORMAL"
+                "name": "GERENTE",
+                "value": "GERENTE"
               }
             ]
           },
@@ -844,7 +827,7 @@
                 }
               },
               "servicioId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -886,7 +869,7 @@
               },
               "servicio": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "servicioId"
@@ -1260,6 +1243,13 @@
                   "kind": "scalar"
                 }
               },
+              "codigoCliente": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "condicionDispositivo": {
                 "nullable": true,
                 "type": {
@@ -1569,6 +1559,9 @@
                 },
                 "codigo": {
                   "column": "codigo"
+                },
+                "codigoCliente": {
+                  "column": "codigoCliente"
                 },
                 "condicionDispositivo": {
                   "column": "condicionDispositivo"
@@ -2612,6 +2605,13 @@
               "uniques": []
             },
             "DetallePresupuesto": {
+              "checks": [
+                {
+                  "expression": "(\"servicioId\" IS NOT NULL AND \"repuestoId\" IS NULL) OR (\"servicioId\" IS NULL AND \"repuestoId\" IS NOT NULL)",
+                  "name": "detalle_presupuesto_un_concepto_59f65598",
+                  "prefix": "detalle_presupuesto_un_concepto"
+                }
+              ],
               "columns": {
                 "cantidad": {
                   "codecId": "pg/int4@1",
@@ -2662,7 +2662,7 @@
                 "servicioId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 }
               },
               "foreignKeys": [
@@ -3076,6 +3076,11 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "codigoCliente": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
                 "condicionDispositivo": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -3383,6 +3388,11 @@
                   "columns": [
                     "codigo"
                   ]
+                },
+                {
+                  "columns": [
+                    "codigoCliente"
+                  ]
                 }
               ]
             },
@@ -3503,7 +3513,14 @@
                   "id"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "ordenId",
+                    "version"
+                  ]
+                }
+              ]
             },
             "Repuestos": {
               "checks": [
@@ -3686,8 +3703,8 @@
             "Usuarios": {
               "checks": [
                 {
-                  "expression": "\"rol\" IN ('ADMINISTRADOR', 'TECNICO', 'RECEPCIONISTA', 'ALMACENISTA')",
-                  "name": "Usuarios_rol_check_e20a97be",
+                  "expression": "\"rol\" IN ('ADMINISTRADOR', 'TECNICO', 'RECEPCIONISTA', 'GERENTE')",
+                  "name": "Usuarios_rol_check_354854ec",
                   "prefix": "Usuarios_rol_check"
                 }
               ],
@@ -3858,15 +3875,7 @@
                 "ADMINISTRADOR",
                 "TECNICO",
                 "RECEPCIONISTA",
-                "ALMACENISTA"
-              ]
-            },
-            "TipoAjuste": {
-              "kind": "valueSet",
-              "values": [
-                "DESCUENTO",
-                "RECARGO",
-                "NORMAL"
+                "GERENTE"
               ]
             },
             "TipoContacto": {
@@ -3912,7 +3921,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "76a9d7dabfe8a6e50c6aedebbbfbbca570e2b0cab6c402e23dcec2aa877f6c9b"
+    "storageHash": "b47e61ec36aad4a39885fcc469d96821a4bcfaa6bd2787d4ef9ca43fc22e6790"
   },
   "execution": {
     "executionHash": "8846dc556b0816156c8e06f321e977d9a2c8cc60bc97905f66e82acad40b9457",

@@ -15,6 +15,7 @@ import {
   Warehouse,
   ArrowLeftRight,
   UserCog,
+  ReceiptText,
 } from "lucide-react";
 
 import {
@@ -67,6 +68,11 @@ const navigation = [
         title: "Diagnósticos",
         url: "/diagnosticos",
         icon: Stethoscope,
+      },
+      {
+        title: "Presupuestos",
+        url: "/presupuestos",
+        icon: ReceiptText,
       },
       {
         title: "Servicios",

@@ -1,6 +1,7 @@
 'use client'
 
 import { SearchForm } from "@/components/search-form"
+import { logout } from "@/app/(auth)/login/actions"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useSidebar } from "@/components/ui/sidebar"
-import { PanelLeftIcon } from "lucide-react"
+import { LogOut, PanelLeftIcon } from "lucide-react"
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar()
@@ -45,6 +46,11 @@ export function SiteHeader() {
           </BreadcrumbList>
         </Breadcrumb>
         <SearchForm className="w-full sm:ml-auto sm:w-auto" />
+        <form action={logout}>
+          <Button className="h-8 w-8" variant="ghost" size="icon" type="submit" title="Cerrar sesión">
+            <LogOut />
+          </Button>
+        </form>
       </div>
     </header>
   )

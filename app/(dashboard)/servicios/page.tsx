@@ -1,13 +1,34 @@
-export default function ServicioPage() {
+import { ServiceManagement } from "@/components/service-management";
+import { requireUser } from "@/lib/auth";
+import { db } from "@/src/prisma/db";
+
+export default async function ServicioPage() {
+  const currentUser = await requireUser();
+
+  if (currentUser.rol !== "ADMINISTRADOR" && currentUser.rol !== "RECEPCIONISTA") {
+    return (
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <h1 className="text-xl font-semibold">Gestión de servicios</h1>
+        <p className="text-sm text-muted-foreground">
+          Solo recepción y administración pueden gestionar servicios.
+        </p>
+      </div>
+    );
+  }
+
+  const services = await db.orm.public.Servicios
+    .select("id", "nombre", "descripcion", "precioReferencial", "activo")
+    .all();
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <h1>Gestion de servicios</h1>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
+      <div>
+        <h1 className="text-xl font-semibold">Gestión de servicios</h1>
+        <p className="text-sm text-muted-foreground">
+          Administra el catálogo de servicios y sus precios de referencia.
+        </p>
       </div>
-      <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+      <ServiceManagement services={services} />
     </div>
   );
 }

@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'76a9d7dabfe8a6e50c6aedebbbfbbca570e2b0cab6c402e23dcec2aa877f6c9b'>;
+  StorageHashBase<'b47e61ec36aad4a39885fcc469d96821a4bcfaa6bd2787d4ef9ca43fc22e6790'>;
 export type ExecutionHash =
   ExecutionHashBase<'8846dc556b0816156c8e06f321e977d9a2c8cc60bc97905f66e82acad40b9457'>;
 export type ProfileHash =
@@ -382,8 +382,8 @@ type FieldTypeOverrides = {
       };
       readonly Usuarios: {
         readonly rol: {
-          readonly output: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'ALMACENISTA';
-          readonly input: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'ALMACENISTA';
+          readonly output: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'GERENTE';
+          readonly input: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'GERENTE';
         };
       };
     };
@@ -511,8 +511,8 @@ type ColumnTypeOverrides = {
     };
     readonly Usuarios: {
       readonly rol: {
-        readonly output: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'ALMACENISTA';
-        readonly input: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'ALMACENISTA';
+        readonly output: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'GERENTE';
+        readonly input: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'GERENTE';
       };
     };
   };
@@ -587,7 +587,7 @@ export namespace Models {
     servicioId: FieldOutputTypes['public']['DetallePresupuesto']['servicioId'];
     presupuesto: public_Presupuestos;
     repuesto: public_Repuestos | null;
-    servicio: public_Servicios;
+    servicio: public_Servicios | null;
     readonly [RelationKeys]?: 'presupuesto' | 'repuesto' | 'servicio';
   };
   export type public_Dispositivos = {
@@ -625,6 +625,7 @@ export namespace Models {
   export type public_Orden = {
     accesoriosRecibidos: FieldOutputTypes['public']['Orden']['accesoriosRecibidos'];
     codigo: FieldOutputTypes['public']['Orden']['codigo'];
+    codigoCliente: FieldOutputTypes['public']['Orden']['codigoCliente'];
     condicionDispositivo: FieldOutputTypes['public']['Orden']['condicionDispositivo'];
     descuentoAplicado: FieldOutputTypes['public']['Orden']['descuentoAplicado'];
     diagnostico: FieldOutputTypes['public']['Orden']['diagnostico'];
@@ -1133,7 +1134,7 @@ type ContractBase = Omit<
                 readonly servicioId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
               };
@@ -1429,6 +1430,12 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly codigoCliente: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
                 readonly condicionDispositivo: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -1596,7 +1603,10 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['codigo'] }];
+              uniques: readonly [
+                { readonly columns: readonly ['codigo'] },
+                { readonly columns: readonly ['codigoCliente'] },
+              ];
               indexes: readonly [
                 {
                   readonly name: 'Orden_dispositivoId_idx_d98b2f4f';
@@ -1742,7 +1752,7 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
+              uniques: readonly [{ readonly columns: readonly ['ordenId', 'version'] }];
               indexes: readonly [
                 {
                   readonly name: 'Presupuestos_ordenId_idx_b087098b';
@@ -2038,16 +2048,7 @@ type ContractBase = Omit<
             };
             readonly Rol: {
               readonly kind: 'valueSet';
-              readonly values: readonly [
-                'ADMINISTRADOR',
-                'TECNICO',
-                'RECEPCIONISTA',
-                'ALMACENISTA',
-              ];
-            };
-            readonly TipoAjuste: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['DESCUENTO', 'RECARGO', 'NORMAL'];
+              readonly values: readonly ['ADMINISTRADOR', 'TECNICO', 'RECEPCIONISTA', 'GERENTE'];
             };
             readonly TipoContacto: {
               readonly kind: 'valueSet';
@@ -2450,7 +2451,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly servicioId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
             };
@@ -2485,7 +2486,7 @@ type ContractBase = Omit<
                   readonly model: 'Servicios';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['servicioId'];
                   readonly targetFields: readonly ['id'];
@@ -2712,6 +2713,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly codigoCliente: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly condicionDispositivo: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2910,6 +2915,7 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly accesoriosRecibidos: { readonly column: 'accesoriosRecibidos' };
                 readonly codigo: { readonly column: 'codigo' };
+                readonly codigoCliente: { readonly column: 'codigoCliente' };
                 readonly condicionDispositivo: { readonly column: 'condicionDispositivo' };
                 readonly descuentoAplicado: { readonly column: 'descuentoAplicado' };
                 readonly diagnostico: { readonly column: 'diagnostico' };
@@ -3347,15 +3353,7 @@ type ContractBase = Omit<
               { readonly name: 'ADMINISTRADOR'; readonly value: 'ADMINISTRADOR' },
               { readonly name: 'TECNICO'; readonly value: 'TECNICO' },
               { readonly name: 'RECEPCIONISTA'; readonly value: 'RECEPCIONISTA' },
-              { readonly name: 'ALMACENISTA'; readonly value: 'ALMACENISTA' },
-            ];
-          };
-          readonly TipoAjuste: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'DESCUENTO'; readonly value: 'DESCUENTO' },
-              { readonly name: 'RECARGO'; readonly value: 'RECARGO' },
-              { readonly name: 'NORMAL'; readonly value: 'NORMAL' },
+              { readonly name: 'GERENTE'; readonly value: 'GERENTE' },
             ];
           };
           readonly TipoContacto: {
@@ -3443,12 +3441,7 @@ type ContractBase = Omit<
             { readonly name: 'ADMINISTRADOR'; readonly value: 'ADMINISTRADOR' },
             { readonly name: 'TECNICO'; readonly value: 'TECNICO' },
             { readonly name: 'RECEPCIONISTA'; readonly value: 'RECEPCIONISTA' },
-            { readonly name: 'ALMACENISTA'; readonly value: 'ALMACENISTA' },
-          ];
-          readonly TipoAjuste: readonly [
-            { readonly name: 'DESCUENTO'; readonly value: 'DESCUENTO' },
-            { readonly name: 'RECARGO'; readonly value: 'RECARGO' },
-            { readonly name: 'NORMAL'; readonly value: 'NORMAL' },
+            { readonly name: 'GERENTE'; readonly value: 'GERENTE' },
           ];
           readonly TipoContacto: readonly [
             { readonly name: 'TELEFONO'; readonly value: 'TELEFONO' },
