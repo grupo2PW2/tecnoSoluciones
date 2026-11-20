@@ -35,8 +35,14 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## Instalar para seeders
+npm install -D tsx
+
+## ejecutar seed
+npm run db:seed
+
 ## Pasos de migracion prisma
 - editar src/prisma/contract.prisma
-- npx prisma contract emit
-- npx prisma migration plan --name <name>
-- npx prisma db migrate --advance-ref db
+npx prisma contract emit
+npx prisma migration plan --name <name>
+npx prisma db migrate --advance-ref db

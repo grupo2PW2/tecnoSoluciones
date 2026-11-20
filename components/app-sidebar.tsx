@@ -1,178 +1,166 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 
-import {
-  LayoutDashboard,
-  Users,
-  MonitorSmartphone,
-  ClipboardList,
-  Stethoscope,
-  Wrench,
-  Package,
-  Warehouse,
-  ArrowLeftRight,
-  UserCog,
-} from "lucide-react";
-
+import { NavMain } from "@/components/nav-main";
+import { NavProjects } from "@/components/nav-projects";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar";
+import {
+  AudioLinesIcon,
+  TerminalIcon,
+  TerminalSquareIcon,
+  BotIcon,
+  BookOpenIcon,
+  Settings2Icon,
+  FrameIcon,
+  TableConfig,
+} from "lucide-react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
-const navigation = [
-  {
-    title: "General",
-    items: [
-      {
-        title: "Dashboard",
-        url: "/dashboard",
-        icon: LayoutDashboard,
-      },
-    ],
+// This is sample data.
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
-  {
-    title: "Atención",
-    items: [
-      {
-        title: "Clientes",
-        url: "/clientes",
-        icon: Users,
-      },
-      {
-        title: "Dispositivos",
-        url: "/dispositivos",
-        icon: MonitorSmartphone,
-      },
-      {
-        title: "Órdenes",
-        url: "/ordenes",
-        icon: ClipboardList,
-      },
-    ],
-  },
-  {
-    title: "Servicio técnico",
-    items: [
-      {
-        title: "Diagnósticos",
-        url: "/diagnosticos",
-        icon: Stethoscope,
-      },
-      {
-        title: "Servicios",
-        url: "/servicios",
-        icon: Wrench,
-      },
-    ],
-  },
-  {
-    title: "Almacén",
-    items: [
-      {
-        title: "Repuestos",
-        url: "/repuestos",
-        icon: Package,
-      },
-      {
-        title: "Inventario",
-        url: "/inventario",
-        icon: Warehouse,
-      },
-      {
-        title: "Movimientos",
-        url: "/movimientos",
-        icon: ArrowLeftRight,
-      },
-    ],
-  },
-  {
-    title: "Administración",
-    items: [
-      {
-        title: "Usuarios",
-        url: "/usuarios",
-        icon: UserCog,
-      },
-    ],
-  },
-];
+  teams: [
+    {
+      name: "Tecno Soluciones",
+      logo: <TableConfig />,
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+      logo: <AudioLinesIcon />,
+      plan: "Startup",
+    },
+    {
+      name: "Evil Corp.",
+      logo: <TerminalIcon />,
+      plan: "Free",
+    },
+  ],
+  navMain: [
+    {
+      title: "Recepcion",
+      url: "#",
+      icon: <TerminalSquareIcon />,
+      isActive: true,
+      items: [
+        {
+          title: "Clientes",
+          url: "/clientes",
+        },
+        {
+          title: "Starred",
+          url: "#",
+        },
+        {
+          title: "Settings",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Ordenes",
+      url: "#",
+      icon: <BotIcon />,
+      items: [
+        {
+          title: "Genesis",
+          url: "#",
+        },
+        {
+          title: "Explorer",
+          url: "#",
+        },
+        {
+          title: "Quantum",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Reparaciones",
+      url: "#",
+      icon: <BookOpenIcon />,
+      items: [
+        {
+          title: "Introduction",
+          url: "#",
+        },
+        {
+          title: "Get Started",
+          url: "#",
+        },
+        {
+          title: "Tutorials",
+          url: "#",
+        },
+        {
+          title: "Changelog",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Gestion administrativa",
+      url: "#",
+      icon: <Settings2Icon />,
+      items: [
+        {
+          title: "General",
+          url: "#",
+        },
+        {
+          title: "Team",
+          url: "#",
+        },
+        {
+          title: "Billing",
+          url: "#",
+        },
+        {
+          title: "Limits",
+          url: "#",
+        },
+      ],
+    },
+  ],
+  projects: [
+    {
+      name: "Dashboard",
+      url: "/dashboard",
+      icon: <FrameIcon />,
+    },
+  ],
+};
 
-export function AppSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
-  const pathname = usePathname();
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
-    <Sidebar
-      className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
-      {...props}
-    >
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              render={<Link href="/dashboard" />}
-            >
-              <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Wrench className="size-4" />
-              </div>
-
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  Tecno Soluciones
-                </span>
-                <span className="truncate text-xs">
-                  Servicio técnico
-                </span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-
       <SidebarContent>
-        {navigation.map((group) => (
-          <SidebarGroup key={group.title}>
-            <SidebarGroupLabel>
-              {group.title}
-            </SidebarGroupLabel>
-
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => {
-                  const isActive =
-                    pathname === item.url ||
-                    pathname.startsWith(`${item.url}/`);
-
-                  return (
-                    <SidebarMenuItem key={item.url}>
-                      <SidebarMenuButton
-                        render={<Link href={item.url} />}
-                        isActive={isActive}
-                        tooltip={item.title}
-                      >
-                        <item.icon className="size-4" />
-                        <span>{item.title}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        {/* <NavProjects projects={projects} /> */}
+        <NavMain items={data.navMain} />
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

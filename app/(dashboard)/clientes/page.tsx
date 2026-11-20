@@ -1,13 +1,32 @@
-export default function ClientePage() {
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+
+import { obtenerClientesPaginados } from "@/features/clientes/queries";
+
+import { ClientesListado } from "@/features/clientes/components/clientes-listado";
+
+export default async function ClientesPage() {
+  // TODO: verificar sesión y permisos de lectura.
+
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["clientes", { buscar: "", page: 1 }],
+
+    queryFn: () =>
+      obtenerClientesPaginados({
+        buscar: "",
+        page: 1,
+        limit: 10,
+      }),
+  });
+
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4">
-      <h1>Gestion de cliente</h1>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
-      </div>
-      <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ClientesListado />
+    </HydrationBoundary>
   );
 }

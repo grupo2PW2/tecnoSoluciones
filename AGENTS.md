@@ -8,223 +8,116 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# AGENTS.md — TecnoSoluciones
+# AGENTS.md · Tecno Soluciones
 
-## 1. Propósito y prioridad
+## Objetivo del proyecto
 
-Este repositorio contiene **TecnoSoluciones**, una aplicación web de gestión de atención y servicios técnicos de equipos electrónicos.
+Tecno Soluciones gestiona la recepción, el diagnóstico, la reparación y la entrega de equipos electrónicos. También gestiona presupuestos, repuestos, movimientos de inventario y ventas directas de repuestos.
 
-Trabaja como desarrollador senior **dentro de la arquitectura existente**, sin reestructurar el proyecto por iniciativa propia. El objetivo es implementar el sistema **módulo por módulo**, con cambios pequeños, coherentes y sin trabajo repetitivo.
+Prioriza que cada usuario pueda completar su trabajo de principio a fin y que la interfaz muestre qué está viendo, qué puede hacer y qué falta para avanzar. Usa español en la interfaz y muestra los importes en bolivianos (Bs).
 
-Orden de prioridad ante conflictos:
-1. Instrucciones explícitas del usuario para la tarea actual.
-2. Reglas de negocio y decisiones fijadas en este archivo.
-3. `ARCHITECTURE.md` y convenciones ya presentes en el repositorio.
-4. Contrato de datos real y migraciones existentes.
-5. Convenciones generales del ecosistema.
+## Forma de trabajo y aprobación por módulo
 
-**Antes de cualquier tarea**, leer este archivo y `ARCHITECTURE.md` (si está en el repositorio), inspeccionar únicamente los archivos pertinentes y verificar el estado real del módulo. Si una regla contradice el contrato existente, informar la diferencia y proponer una corrección; no decidir silenciosamente.
+- Trabaja un solo módulo a la vez. Antes de empezar, indica qué módulo vas a trabajar, qué podrá hacer cada rol, qué pantallas o formularios cambiarán y cómo verificarás el resultado. Si todavía no hay un módulo autorizado, espera mi aprobación.
+- Dentro del módulo autorizado, completa el flujo de principio a fin. Incluye interfaz, permisos, cálculos, validaciones y persistencia. Si el flujo necesita una función de otro módulo, reutiliza lo existente. Si necesitas ampliar ese otro módulo, explica por qué y pide permiso antes de hacerlo.
+- Si hay varias formas de resolver una situación que afecta el flujo de usuario, los permisos, el esquema, el stock o los importes, explica brevemente cuál recomiendas, por qué y qué cambiaría. Pide permiso antes de aplicar esa decisión. Resuelve los detalles rutinarios dentro del alcance aprobado siguiendo las convenciones del proyecto.
+- Antes de modificar un módulo, revisa sus rutas, componentes, consultas, acciones y modelos. Reutiliza la lógica existente que cumpla los requerimientos. Organiza la lógica y los componentes del módulo en `features/` según la estructura del repositorio. Usa `app/` para páginas, layouts y manejadores de rutas.
+- Reutiliza los componentes shadcn/ui disponibles. Si necesitas agregar uno o instalar una dependencia, indica qué necesitas, para qué y qué comando ejecutarías. Espera mi permiso antes de ejecutarlo.
+- Al terminar el módulo, resume qué quedó implementado, cómo lo verificaste y qué sigue pendiente. Detente y espera mi aprobación explícita antes de iniciar el siguiente módulo.
 
-## 2. Stack y estructura existente
+## Diseño e interacción
 
-- Next.js con **App Router**, React y TypeScript estricto.
-- Prisma ORM **8** y PostgreSQL.
-- Tailwind CSS y **shadcn/ui**; iconos de `lucide-react`.
-- Conservar la tipografía **Titillium Web**, tokens, estilos globales y componentes existentes.
-- Consultar las versiones instaladas en `package.json`; no asumir que un ejemplo de otra versión es compatible.
+- Usa `Dialog` para formularios cortos y confirmaciones. Para formularios largos, como una orden o un presupuesto, usa un `Sheet` amplio que se abra desde la derecha. Divide el contenido en secciones, permite desplazarlo y mantén visibles las acciones de guardar y cancelar.
+- Usa tablas cuando el usuario necesite comparar registros y tarjetas cuando le convenga identificar y actuar sobre cada elemento. Destaca la información que ayuda al rol a decidir. En órdenes, prioriza el código, el cliente, el equipo, el estado, el técnico y la fecha relevante.
+- Distingue los estados con texto y color. Da mayor peso a la acción principal y agrupa las secundarias. Si una acción está bloqueada, muestra la razón cerca de ella.
+- Actualiza búsquedas y filtros al escribir o al seleccionar una opción, sin pulsar «Buscar» ni recargar la página. Si la búsqueda consulta al servidor, aplica un breve retraso al escribir y evita que una respuesta anterior reemplace la más reciente. Si hay paginación, vuelve a la primera página al cambiar la búsqueda o los filtros.
+- Incluye estados de carga, error, lista vacía y búsqueda sin resultados. Si falla el guardado, conserva los datos ingresados y muestra cómo corregir el error. Previene guardados duplicados.
+- Usa etiquetas visibles en los formularios, navegación por teclado y foco claro al abrir y cerrar un modal o panel.
 
-Respetar la organización documentada en `ARCHITECTURE.md`:
+## Órdenes de servicio como centro de trabajo
 
-- `app/(auth)/`: autenticación.
-- `app/(dashboard)/dashboard/`: panel administrativo.
-- `app/(dashboard)/clientes/`, `diagnosticos/`, `dispositivos/`, `inventario/`, `movimientos/`, `ordenes/`, `repuestos/`, `servicios/`, `usuarios/`: módulos existentes.
-- `app/(publico)/orden/[codigo]/`: consulta pública de una orden. El parámetro de la URL debe tratarse como **credencial de consulta**, no como identificador administrativo secuencial.
-- `components/`: componentes compartidos de aplicación.
-- `components/ui/`: controles genéricos de shadcn/ui.
-- `hooks/`: hooks compartidos.
-- `lib/`: utilidades generales.
-- `src/prisma/`: contrato, conexión y artefactos Prisma.
-- `migrations/`: historial de migraciones.
+La orden reúne la información y las acciones necesarias para atender un equipo. Los módulos de Clientes, Equipos e Inventario también permiten buscar y administrar sus propios registros.
 
-Los grupos de rutas `(auth)`, `(dashboard)` y `(publico)` no forman parte de la URL.
+### Recepción
 
-**No migrar carpetas ni introducir una arquitectura nueva** sin una necesidad concreta y aprobación. No crear carpetas `services`, `repositories`, `actions`, `schemas`, etc. por costumbre: primero revisar cómo está organizado el código y extraer responsabilidades solo cuando ayude al módulo.
+- En «Nueva orden», permite buscar y seleccionar al cliente y su equipo. Si alguno no existe, permite crearlo desde el mismo flujo. Al guardar el cliente o equipo nuevo, selecciónalo y conserva los datos ya ingresados en la orden.
+- Permite indicar si el ingreso requiere diagnóstico o corresponde a un servicio directo. Registra el motivo, la condición física del equipo y los accesorios recibidos.
+- Al crear la orden, genera un código interno secuencial y un código de consulta único para el cliente. Muestra la vista previa del ticket con equipo, fecha de ingreso, dirección de seguimiento y código visible. Incluye un QR de acceso directo cuando esté disponible. Permite imprimir y reimprimir el ticket con el mismo código.
+- Desde el detalle, permite consultar el avance y los presupuestos, cotizar un servicio directo, registrar la respuesta del cliente en tienda y completar el cobro y la entrega cuando corresponda.
+- Recepción también puede gestionar repuestos, consultar stock y registrar entradas, salidas, ajustes y ventas directas desde Inventario.
 
-## 3. Principios de implementación
+### Técnico
 
-- Server Components por defecto; `"use client"` solo para interactividad necesaria.
-- La lógica de negocio, autorización y acceso a datos se ejecuta en el servidor, nunca en componentes cliente.
-- Reutilizar `components/ui/` y componentes existentes antes de crear otros.
-- Mantener páginas como composición; separar UI y lógica cuando aporte claridad real.
-- Usar los tipos existentes y TypeScript estricto; evitar `any` y casts inseguros.
-- Respetar las convenciones del proyecto: nombres del dominio en español, componentes en PascalCase, funciones/variables en camelCase, rutas en minúsculas, imports `@/`, `import type` cuando proceda.
-- No duplicar formularios, consultas, cálculos, validaciones, estados, componentes ni reglas que ya existan.
-- No añadir paquetes, bibliotecas visuales, abstracciones, capas, hooks o utilidades que no aporten valor a la tarea.
-- Utilizar los patrones de validación ya instalados; validar siempre en servidor además de la UI.
-- Utilizar los estilos y tokens existentes en vez de introducir diseños inconexos.
+- En «Disponibles», muestra órdenes sin técnico que pueda tomar. En «Mis órdenes», muestra sus trabajos y cuántos de sus tres cupos están ocupados.
+- Desde la orden, permite iniciar el diagnóstico, registrar hallazgos, preparar presupuestos y adicionales, consultar repuestos compatibles y su stock, iniciar y finalizar servicios, registrar repuestos utilizados y verificar el trabajo.
+- En el detalle técnico, prioriza el equipo, el problema reportado, el alcance aprobado, el estado de cada servicio y la siguiente acción permitida.
+- Cuando el trabajo autorizado esté terminado y verificado, permite marcar la orden como lista para entrega.
 
-## 4. Fuente de verdad de base de datos — Prisma 8
+### Administración, gerencia y cliente
 
-La fuente **editable** del modelo es `src/prisma/contract.prisma`, **no** `schema.prisma`.
+- Administración puede realizar todas las operaciones de recepción, incluido inventario y ventas directas. También administra usuarios, roles, servicios y parámetros, y puede acceder a las consultas y reportes de gerencia. La ejecución y la verificación técnica corresponden al técnico.
+- Gerencia tiene acceso de lectura a órdenes, historiales, carga por técnico y reportes. Los reportes deben permitir consultar órdenes por periodo y estado, trabajo por técnico, equipos con mayor frecuencia de reparación y repuestos utilizados.
+- El cliente consulta el estado de su orden mediante el código o QR del ticket. Puede revisar el alcance, el importe y las fechas de una oferta vigente y registrar su respuesta. Muestra solo la información necesaria para el seguimiento y la decisión.
+- Valida los permisos en el servidor en cada operación, además de ajustar las acciones visibles en la interfaz.
 
-- `src/prisma/contract.json` y `src/prisma/contract.d.ts` son **generados**: nunca editarlos a mano.
-- `src/prisma/db.ts` centraliza conexión y acceso a PostgreSQL mediante `DATABASE_URL`. No abrir conexiones paralelas.
-- Usar enums, relaciones, nombres, optionalidad, identificadores y `NumericString(10, 2)` definidos por el contrato. No inventar campos o valores de enum.
-- No sustituir comandos del flujo de Prisma 8 por instrucciones antiguas de Prisma 6/7.
-- Respetar las **13 entidades aprobadas**: `Clientes`, `Contactos`, `Dispositivos`, `Usuarios`, `Orden`, `Servicios`, `Actividades`, `Presupuestos`, `DetallePresupuesto`, `Repuestos`, `Inventario`, `Movimientos` y `DetalleMovimientos`. Confirmar sus nombres técnicos exactos en `contract.prisma` antes de usarlos.
-- No agregar tablas de pagos, historial de estados, cuentas de cliente, empleados, almacenes, presupuestos separados por tipo ni responsables técnicos por actividad.
-- No cambiar relaciones ni columnas sin autorización expresa. Si falta un campo aprobado (por ejemplo `codigoCliente`), señalarlo antes de editar el contrato.
+## Reglas de negocio
 
-**Si el usuario autoriza un cambio de esquema**, seguir el procedimiento existente:
-1. Editar `src/prisma/contract.prisma`.
-2. Ejecutar `npx prisma contract emit` (o `npm run contract:emit` si existe).
-3. Crear un plan con `npx prisma migration plan --name <nombre>`.
-4. Revisar el plan; no ejecutar migraciones destructivas sin autorización específica.
-5. Aplicar en desarrollo, solo con autorización, mediante `npx prisma db migrate --advance-ref db`.
-6. No modificar migraciones históricas ni archivos generados a mano.
+### Asignación, diagnóstico y cierre técnico
 
-Estos comandos son **pasos de una modificación de esquema**, no verificaciones de calidad ni permiso para cambiar el esquema por iniciativa propia.
+- Cada orden corresponde a un equipo de un cliente y comienza como `RECIBIDO`.
+- Un técnico puede tomar hasta tres órdenes activas. Valida el cupo y que la orden siga sin asignar en la misma operación, incluso ante solicitudes simultáneas.
+- La orden asignada ocupa cupo mientras `fechaCierreTecnico` esté vacía. Libera el cupo al pasar a `LISTO`, al registrar el rechazo de toda la reparación o al cancelar. El rechazo de un adicional conserva el cupo si queda trabajo autorizado por terminar.
+- Solo permite cancelar si el técnico aún no realizó ningún trabajo. Esto incluye el diagnóstico. Si ya inició una intervención o registró un trabajo realizado, bloquea la cancelación y muestra el motivo. Si el cliente decide retirar el equipo después del diagnóstico, registra el rechazo de la reparación y la devolución.
+- Guarda el estado, las fechas, las observaciones y la verificación de cada servicio en `PresupuestoServicio`. Evita introducir una tabla `Actividades`.
+- Registra el diagnóstico general como una sola línea, aunque el técnico encuentre varias fallas. Puede iniciarse en un presupuesto en borrador y conservar su estado `FINALIZADO` cuando se presente la cotización de reparación.
+- La aprobación autoriza los servicios de la versión correspondiente. El técnico marca cada servicio en proceso cuando empieza y lo finaliza y verifica después de probar el resultado. Al completar los trabajos autorizados, puede marcar la orden `LISTO`.
 
-## 5. Roles y permisos
+### Presupuestos, aprobación y versiones
 
-Roles del personal: **administrador, recepción, técnico y gerente**; usar los valores exactos del enum real.
+- Antes de cotizar un trabajo que requiera repuestos, comprueba su compatibilidad y disponibilidad. Si falta una pieza, informa al cliente y deja fuera de la cotización el trabajo que depende de ella.
+- Cada versión presentada conserva sus partidas, cantidades, precios, prioridad, recargo, descuento, total ofrecido, fecha estimada y fecha de vencimiento. La fecha estimada indica cuándo se espera tener listo el equipo y el vencimiento indica hasta cuándo se puede responder.
+- Recepción puede registrar la aprobación o el rechazo en tienda. El cliente también puede responder por web. Registra la versión, la fecha y el canal de respuesta. Solo acepta una respuesta para una oferta pendiente y vigente.
+- Una oferta que vence sin respuesta queda `VENCIDO`. Una oferta que el cliente rechaza expresamente queda `RECHAZADO`. Para retomar una oferta vencida, presenta otra versión con los precios y las fechas aplicables. El vencimiento por sí solo no genera un recargo.
+- Si cambia el alcance antes de la primera aprobación, presenta una nueva versión principal y conserva la anterior para consulta. Si el cliente quiere aceptar solo parte de una propuesta, presenta una nueva versión con ese alcance.
+- Después de aprobar el presupuesto principal, una versión adicional contiene únicamente el trabajo nuevo. Si el cliente la rechaza o vence, conserva el alcance ya autorizado. Si el trabajo adicional impide completar la reparación original, el técnico registra el motivo y recepción coordina con el cliente.
 
-- **Administrador:** administración de usuarios, supervisión y operaciones autorizadas del sistema.
-- **Recepción:** clientes, contactos, dispositivos, ingreso de órdenes, ticket, inventario, cobro y entrega.
-- **Técnico:** visualizar órdenes disponibles, autoasignarse órdenes, diagnosticar, registrar sus actividades, usar repuestos en sus órdenes y finalizar/verificar trabajos.
-- **Gerente:** consultar reportes e información de supervisión según sus permisos.
+### Cobro, entrega y devolución
 
-No existe rol de almacén. No existen cuentas de usuario para clientes.
+- Recepción registra un único cobro al entregar el equipo, sin adelantos. El total incluye lo aprobado que corresponda cobrar. Un adicional rechazado o vencido queda fuera y cada partida se cobra una sola vez.
+- Si el cliente rechaza toda la reparación y ya se realizó el diagnóstico, se cobra únicamente el diagnóstico a su tarifa completa.
+- Al entregar o devolver el equipo, registra la fecha, el usuario que realizó la entrega y el importe cobrado cuando corresponda. Una reparación entregada queda `ENTREGADO`. Una devolución tras un rechazo queda `RECHAZADO_ENTREGADO`. Para una devolución tras cancelación, conserva `CANCELADO` y registra los datos de entrega.
 
-Comprobar **autenticación y autorización en servidor en cada operación protegida**. Ocultar un botón no equivale a autorizar una operación.
+## Cálculos de inventario, movimientos y presupuestos
 
-## 6. Recepción, ticket y consulta pública
+### Existencias en cajas y unidades
 
-1. Recepción registra o selecciona `Clientes`, `Contactos` y `Dispositivos`.
-2. Registra `Orden` con servicio solicitado, problemas, condición del dispositivo, accesorios, prioridad y otros campos aprobados.
-3. La orden genera **dos identificadores únicos**:
-   - `codigo`: identificador administrativo **secuencial**, legible (ej. `ORD-000125`).
-   - `codigoCliente`: **credencial privada, aleatoria, criptográficamente segura y no predecible**, para consulta pública y autorización de presupuestos.
-4. Recepción entrega un ticket imprimible con información de recepción y un QR/enlace o código privado de consulta.
-5. El cliente, **sin iniciar sesión**, consulta el estado actual y la información estrictamente necesaria de su orden.
-6. Si existe un presupuesto pendiente, el cliente puede **aprobarlo o rechazarlo**, confirmando explícitamente su decisión.
+- Guarda el stock y las cantidades de los movimientos en unidades. Usa `Repuestos.unidadesCaja` para mostrar cajas completas y unidades sueltas. Por ejemplo, con 6 unidades por caja y 33 en stock, muestra «5 cajas y 3 unidades».
+- Si `unidadesCaja` es cero o el repuesto no tiene presentación por caja, muestra el stock solo en unidades y permite registrar únicamente unidades para ese repuesto.
+- En el formulario de movimiento, permite ingresar cajas y unidades por cada repuesto con presentación por caja. Muestra el resultado antes de guardar: `unidades totales = cajas × unidadesCaja + unidades sueltas`.
+- Valida que las cajas y las unidades sean enteros no negativos y que el total por línea sea mayor que cero. Repite el cálculo y la validación en el servidor.
 
-La consulta por `codigoCliente` debe limitar intentos, no revelar datos personales innecesarios y permitir rotación de la credencial si el ticket se pierde. Para decisiones económicas sensibles, aplicar verificación adicional por un medio de contacto registrado cuando corresponda. No implementar aprobación pública con solo el `codigo` secuencial.
+### Movimientos con varios repuestos
 
-## 7. Autoasignación de técnicos y capacidad
+- Un movimiento puede contener varias líneas de detalle. Cada línea corresponde a un repuesto y registra su cantidad y, cuando corresponda, su costo o precio unitario. Permite agregar y quitar líneas antes de confirmar.
+- El tipo de movimiento determina si las cantidades se suman o se restan. Las entradas y los ajustes positivos suman. Las salidas y los ajustes negativos restan. La cantidad de cada línea se registra en positivo.
+- Guarda la cabecera y los detalles del movimiento y actualiza el stock de todos los repuestos afectados en una sola transacción. Si un repuesto aparece en varias líneas, valida su disponibilidad con la suma de esas líneas.
+- Si alguna salida supera el stock disponible, rechaza el movimiento completo, identifica el repuesto que causó el error y conserva el formulario para corregirlo. Evita que las operaciones simultáneas dejen stock negativo.
+- Después de guardar, actualiza existencias e historial en pantalla sin recargar la página. Si corresponde mostrar un importe del movimiento, calcúlalo a partir de las cantidades y los costos o precios unitarios de sus detalles, según el tipo.
+- Cotizar y aprobar no reservan ni descuentan stock. Al aplicar un repuesto, registra una salida por reparación vinculada a la orden. Al entregar un repuesto vendido directamente, registra una salida de venta con su detalle. La venta directa puede existir sin una orden de reparación.
+- Si necesitas cambiar cómo se calcula `costoActual` o `precioVenta`, explica la fórmula recomendada con un ejemplo y pide permiso antes de modificarla.
 
-- Una orden nueva puede tener `tecnicoId = NULL`.
-- El técnico **se autoasigna** una orden libre desde el servidor.
-- Cada técnico puede mantener **máximo dos órdenes con trabajo técnico activo**.
-- Una orden ocupa cupo mientras esté asignada y **no** cumpla simultáneamente:
-  - `estado = listo_para_entrega` (valor real del enum), **y**
-  - `trabajoVerificado = true`.
-- Una orden correctamente **cancelada/cerrada** tampoco ocupa cupo.
-- Una orden pendiente de presupuesto, aprobación o repuestos **sí ocupa cupo** inicialmente.
-- La liberación de cupo ocurre al finalizar y verificar el trabajo técnico, **no** al cobrar ni entregar el equipo.
-- Una vez lista y verificada, recepción asume el cobro y la entrega.
-- Administración puede reasignar órdenes justificadamente, sin sobrepasar el límite de destino.
-- Proteger autoasignación y conteo de cupos ante **peticiones concurrentes**, mediante una transacción y un mecanismo de serialización/bloqueo adecuado. No resolverlo solo en UI.
-- Solo el técnico responsable puede modificar la ejecución técnica de su orden, salvo permisos administrativos explícitos.
+### Importes de presupuestos
 
-## 8. Servicios, diagnóstico, actividades y presupuesto
+- Calcula cada importe de línea como `cantidad × precioUnitario`. Suma por separado servicios y repuestos. Usa los precios guardados en la versión para reproducir lo ofrecido.
+- Calcula el recargo sobre el importe de la reparación, incluidos mano de obra y repuestos. Aplica 0 % para prioridad baja, 5 % para media y 10 % para alta.
+- Si el cliente aprueba la reparación después del diagnóstico general, aplica una sola vez el descuento del 50 % del precio de ese diagnóstico.
+- Muestra subtotales, recargo, descuento y total en el editor. Recalcula y valida en el servidor. Usa aritmética decimal y guarda el total de la versión al presentarla, junto con sus precios y condiciones.
+- Como referencia, con un diagnóstico de Bs 50, una reparación de Bs 400 y prioridad media, el recargo es Bs 20 y el descuento es Bs 25. El total aprobado es Bs 445 y se cobra al entregar el equipo.
 
-- `Orden.servicioSolicitadoId` (o el nombre equivalente en el contrato) identifica el **servicio principal solicitado**.
-- `Actividades` registra **trabajos efectivamente ejecutados**, con precio aplicado histórico.
-- Una orden tiene un solo técnico responsable; **no** asignar técnicos por actividad.
-- Un mantenimiento o servicio directo con **precio acordado** puede ejecutarse sin presupuesto formal.
-- Si se realiza diagnóstico y se detectan **reparaciones o repuestos adicionales**, generar `Presupuestos` y `DetallePresupuesto` antes de ejecutarlas.
-- El diagnóstico realizado se registra en la orden y como actividad cobrable cuando corresponda.
-- El presupuesto es una **propuesta**, no constituye servicio ejecutado ni salida de inventario.
-- Un presupuesto puede tener versiones; asegurar unicidad de `(ordenId, version)`.
-- Cada línea de detalle representa **o** un servicio **o** un repuesto, nunca ambos ni ninguno.
-- El cliente aprueba o rechaza la **versión concreta** desde su consulta segura.
-- No comenzar reparaciones adicionales sin aprobación. No modificar importes de una versión ya enviada o aprobada: crear una nueva versión y solicitar nueva decisión.
-- Si se rechaza la reparación, no ejecutarla; se cobra el diagnóstico y otros conceptos previamente aceptados si corresponden.
-- Si una reparación excede el importe aprobado, solicitar una nueva autorización antes de ejecutar cargos adicionales.
-- No duplicar el mismo cargo entre diagnóstico, actividades, presupuesto y consumo de repuestos.
+## Verificación antes de dar un módulo por terminado
 
-## 9. Inventario, costos y precios
-
-- `Repuestos`: catálogo, SKU, costo vigente y precio de referencia.
-- `Inventario`: stock disponible y stock mínimo; relación uno a uno por repuesto.
-- `Movimientos` + `DetalleMovimientos`: registro histórico de entradas y salidas.
-- `costoUnitario`: costo de adquisición/valoración del repuesto en ese movimiento.
-- `precioUnitario`: precio de venta aplicado cuando la salida es cobrable.
-- El costo y precio histórico de los movimientos **no cambian** cuando se actualizan los valores de catálogo.
-- Registrar consumos de reparación como movimientos de salida asociados a la orden.
-- Un repuesto presupuestado **no** reduce stock; solo la salida efectivamente registrada lo hace.
-- No permitir stock negativo; controlar concurrencia y actualizar movimiento/inventario **en una misma transacción**.
-- Recepción y administrador realizan entradas y ajustes de inventario; el técnico puede registrar salidas de repuestos de sus propias órdenes.
-- Antes de implementar la valoración de costo en salidas, confirmar el método contable acordado; no asumir FIFO o promedio sin definición.
-- Mantener sincronizados `Inventario.stock` y el histórico de movimientos.
-
-## 10. Importes, descuentos, pago y entrega
-
-- **Subtotal de servicios:** suma de actividades cobrables finalizadas, considerando cantidad si el modelo la incluye.
-- **Subtotal de repuestos:** suma de `cantidad × precioUnitario` para salidas de reparación cobrables de la orden, descontando devoluciones si se admiten.
-- **Importe final:** `subtotalServicios + subtotalRepuestos - descuentoAplicado`.
-- No sumar el presupuesto al importe realizado ni cobrar dos veces un mismo concepto.
-- El diagnóstico se cobra si no se aprueba la reparación; si se aprueba, se aplica el descuento de diagnóstico **una sola vez**, según lo autorizado.
-- No permitir descuentos superiores al subtotal ni importes finales negativos.
-- Los precios acordados/aprobados prevalecen sobre actualizaciones posteriores del catálogo.
-- El cliente paga **todo junto al recoger el dispositivo**; no hay pagos parciales ni tabla de pagos en esta versión.
-- Guardar en la orden `estadoPago`, `fechaPago`, `metodoPago` y el descuento según el contrato; preservar el importe efectivamente cobrado cuando se confirme el pago, si el contrato contempla ese campo o cuando se apruebe agregarlo.
-- Recepción registra pago, entrega y confirmación del cliente.
-- Solo marcar `entregado` cuando se haya registrado el pago completo y `entregaConfirmada = true`.
-- Proteger contra modificaciones arbitrarias de importes y consumos de una orden ya pagada/entregada.
-
-## 11. Estados e historial
-
-- Se conserva solamente el **estado actual** de cada orden. **No** crear una tabla de historial de cambios de estado.
-- El historial de **servicios del dispositivo** se obtiene de sus distintas órdenes y actividades.
-- Utilizar los valores reales de los enums existentes para recibido, diagnosticado, pendiente de aprobación, en reparación, pendiente de repuestos, listo para entrega, entregado y cancelado, según estén definidos.
-- No inventar transiciones; comprobar que cada transición cumpla las reglas anteriores.
-- Cuando el trabajo técnico esté verificado, pasar a `listo_para_entrega`; desde ahí recepción se encarga de finalizar el proceso.
-
-## 12. Trabajo estrictamente módulo por módulo
-
-**Regla central: una solicitud = un módulo o una funcionalidad claramente delimitada.**
-
-1. **Antes de escribir código:** identificar el módulo solicitado, revisar su implementación actual y las dependencias inmediatas. Explicar brevemente qué se hará y qué archivos se tocarán. Si el usuario pidió implementar directamente, continuar sin solicitar aprobación para cambios ordinarios ya autorizados.
-2. **Implementar solo ese módulo** de extremo a extremo cuando sea posible (datos existentes, validación, lógica de servidor, UI y permisos), sin iniciar el siguiente.
-3. **Reutilizar antes de crear:** comprobar si el formulario, consulta, acción, componente o cálculo ya existe. Corregir/completar lo existente, evitando copias y reimplementaciones.
-4. **Una sola pasada de implementación:** no hacer sucesivos refactors cosméticos, reorganizaciones o cambios no pedidos. No crear archivos vacíos, placeholders innecesarios ni funcionalidades de anticipación.
-5. **Una única verificación al final:** ejecutar **una sola vez `npm run lint`** si el script existe; si no existe, ejecutar **una sola vez `npx tsc --noEmit`** como alternativa. No ejecutar ambas. No repetir el comando automáticamente si falla: informar el fallo y resolverlo solo cuando el usuario indique continuar.
-6. **Sin pruebas por ahora:** no crear ni ejecutar pruebas unitarias, de integración o E2E; no incorporar frameworks de testing; no hacer pruebas manuales sistemáticas ni ejecutar `npm run build` como verificación adicional. El usuario decidirá cuándo iniciar la fase de pruebas.
-7. **Cierre del módulo:** informar brevemente archivos cambiados, funcionalidad terminada, resultado de la verificación única y pendientes reales. **Detenerse y esperar** la siguiente instrucción; no comenzar otro módulo automáticamente.
-
-Una verificación única **no** sustituye las validaciones de seguridad y reglas de negocio que deben implementarse en el código. La ejecución obligatoria de pasos de generación/migración autorizados no cuenta como segunda prueba, pero tampoco permite ejecutar comprobaciones repetidas.
-
-## 13. Prohibiciones y cambios que necesitan autorización
-
-No realizar por iniciativa propia:
-- Crear/eliminar entidades o cambiar relaciones del contrato.
-- Ejecutar migraciones, `db update`, borrados, reseteos o cambios destructivos sin aprobación.
-- Instalar dependencias o cambiar framework, enrutado o arquitectura global.
-- Agregar rol almacén, login de clientes, historial de estados o técnico por actividad.
-- Implementar pagos parciales, facturación, proveedores o módulos ERP fuera de alcance.
-- Modificar estilos globales, layouts o componentes compartidos sin que sea necesario para la tarea.
-- Tocar secretos, credenciales, `.env` o configuración de producción sin autorización.
-- Ejecutar operaciones destructivas de Git o desplegar a producción.
-- Crear pruebas, lanzar builds repetidos o revisar el proyecto entero tras cada cambio pequeño.
-
-Si hay una decisión de dominio sin definir o un conflicto que impide implementar correctamente, explicar la alternativa mínima y pedir decisión **solo sobre ese punto**; no inventar una nueva regla.
-
-## 14. Formato de respuesta del agente
-
-Responder siempre en español, con claridad y sin textos repetitivos.
-
-**Antes de implementar:**
-- Módulo y objetivo.
-- Archivos previstos.
-- Regla de negocio importante que afecta el cambio.
-
-**Al terminar:**
-- Qué se implementó (breve).
-- Archivos modificados.
-- Única verificación: comando, aprobado/fallido/no disponible.
-- Pendientes o bloqueos, si existen.
-- No continuar con otro módulo.
-
-No afirmar que una funcionalidad fue probada si solo se ejecutó lint o una revisión de tipos. No reportar éxito si la verificación falló.
+- Comprueba el recorrido completo desde el rol que lo ejecuta y verifica que las acciones restringidas también se bloqueen en el servidor.
+- En Órdenes, prueba el ingreso con cliente y equipo existentes, la creación de ambos desde el mismo formulario, la impresión y reimpresión del ticket, y la toma de una orden con cupo disponible y con los tres cupos ocupados.
+- En Inventario, prueba un movimiento con varios repuestos, la conversión de cajas a unidades y una salida que exceda el stock de una sola línea. Confirma que esa salida deja sin cambios todos los saldos.
+- En Presupuestos, prueba la aprobación, el rechazo, el vencimiento y un adicional rechazado. Comprueba que el total de entrega conserve lo autorizado y aplique el descuento una sola vez.
+- En los módulos que tengan búsquedas, filtros o formularios, comprueba que respondan sin recargar la página y que un error de guardado conserve lo ingresado.

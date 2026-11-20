@@ -1,4 +1,3 @@
-'use client'
 import {
   Avatar,
   AvatarFallback,
@@ -37,10 +36,7 @@ export function NavUser({
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <SidebarMenuButton
-                size="lg"
-                className="aria-expanded:bg-muted aria-expanded:text-foreground"
-              />
+              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
             }
           >
             <Avatar>
@@ -54,7 +50,7 @@ export function NavUser({
             <ChevronsUpDownIcon className="ml-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="min-w-56 rounded-lg"
+            className="w-fit"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -100,13 +96,11 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <LogOutIcon
-                />
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+            <DropdownMenuItem>
+              <LogOutIcon
+              />
+              Log out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

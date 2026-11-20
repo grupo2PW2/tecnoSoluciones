@@ -23,9 +23,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'76a9d7dabfe8a6e50c6aedebbbfbbca570e2b0cab6c402e23dcec2aa877f6c9b'>;
+  StorageHashBase<'1bd9db97a5caa8f03cd976f45eadfb53d87a72bf3c9a452f4b5b1c114eadccbc'>;
 export type ExecutionHash =
-  ExecutionHashBase<'8846dc556b0816156c8e06f321e977d9a2c8cc60bc97905f66e82acad40b9457'>;
+  ExecutionHashBase<'86c0d579516dd94904206233c76a55608d6af658bf55b03d43219765306d3cf2'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -284,21 +284,12 @@ type FieldTypeOverrides = {
           readonly input: 'PENDIENTE' | 'EN_PROCESO' | 'FINALIZADO' | 'CANCELADO';
         };
       };
-      readonly Contactos: {
-        readonly tipo: {
-          readonly output:
-            'TELEFONO' | 'CORREO' | 'WHATSAPP' | 'FACEBOOK' | 'INSTAGRAM' | 'LINKEDIN' | 'OTRO';
-          readonly input:
-            'TELEFONO' | 'CORREO' | 'WHATSAPP' | 'FACEBOOK' | 'INSTAGRAM' | 'LINKEDIN' | 'OTRO';
-        };
-      };
       readonly Dispositivos: {
         readonly tipo: {
           readonly output:
             | 'COMPUTADORA'
             | 'CELULAR'
             | 'LAPTOP'
-            | 'NOTEBOOK'
             | 'TABLET'
             | 'SMARTWATCH'
             | 'IMPRESORA'
@@ -308,7 +299,6 @@ type FieldTypeOverrides = {
             | 'COMPUTADORA'
             | 'CELULAR'
             | 'LAPTOP'
-            | 'NOTEBOOK'
             | 'TABLET'
             | 'SMARTWATCH'
             | 'IMPRESORA'
@@ -338,30 +328,26 @@ type FieldTypeOverrides = {
         readonly estado: {
           readonly output:
             | 'RECIBIDO'
-            | 'EN_PROCESO'
-            | 'DIAGNOSTICADO'
+            | 'EN_DIAGNOSTICO'
             | 'PENDIENTE_APROBACION'
+            | 'APROBADO'
             | 'RECHAZADO'
             | 'EN_REPARACION'
-            | 'LISTO_PARA_ENTREGA'
-            | 'ENTREGADO';
+            | 'ESPERANDO_REPUESTO'
+            | 'LISTO'
+            | 'ENTREGADO'
+            | 'CANCELADO';
           readonly input:
             | 'RECIBIDO'
-            | 'EN_PROCESO'
-            | 'DIAGNOSTICADO'
+            | 'EN_DIAGNOSTICO'
             | 'PENDIENTE_APROBACION'
+            | 'APROBADO'
             | 'RECHAZADO'
             | 'EN_REPARACION'
-            | 'LISTO_PARA_ENTREGA'
-            | 'ENTREGADO';
-        };
-        readonly estadoPago: {
-          readonly output: 'PENDIENTE' | 'PAGADO';
-          readonly input: 'PENDIENTE' | 'PAGADO';
-        };
-        readonly metodoPago: {
-          readonly output: 'EFECTIVO' | 'TARJETA' | 'QR';
-          readonly input: 'EFECTIVO' | 'TARJETA' | 'QR';
+            | 'ESPERANDO_REPUESTO'
+            | 'LISTO'
+            | 'ENTREGADO'
+            | 'CANCELADO';
         };
         readonly prioridad: {
           readonly output: 'BAJA' | 'MEDIA' | 'ALTA';
@@ -376,14 +362,14 @@ type FieldTypeOverrides = {
       };
       readonly Repuestos: {
         readonly estado: {
-          readonly output: 'DISPONIBLE' | 'AGOTADO' | 'EN_REPARACION' | 'DESCATALOGADO';
-          readonly input: 'DISPONIBLE' | 'AGOTADO' | 'EN_REPARACION' | 'DESCATALOGADO';
+          readonly output: 'DISPONIBLE' | 'AGOTADO' | 'EN_REPOSICION' | 'DESCATALOGADO';
+          readonly input: 'DISPONIBLE' | 'AGOTADO' | 'EN_REPOSICION' | 'DESCATALOGADO';
         };
       };
       readonly Usuarios: {
         readonly rol: {
-          readonly output: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'ALMACENISTA';
-          readonly input: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'ALMACENISTA';
+          readonly output: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'GERENTE';
+          readonly input: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'GERENTE';
         };
       };
     };
@@ -413,21 +399,12 @@ type ColumnTypeOverrides = {
         readonly input: 'PENDIENTE' | 'EN_PROCESO' | 'FINALIZADO' | 'CANCELADO';
       };
     };
-    readonly Contactos: {
-      readonly tipo: {
-        readonly output:
-          'TELEFONO' | 'CORREO' | 'WHATSAPP' | 'FACEBOOK' | 'INSTAGRAM' | 'LINKEDIN' | 'OTRO';
-        readonly input:
-          'TELEFONO' | 'CORREO' | 'WHATSAPP' | 'FACEBOOK' | 'INSTAGRAM' | 'LINKEDIN' | 'OTRO';
-      };
-    };
     readonly Dispositivos: {
       readonly tipo: {
         readonly output:
           | 'COMPUTADORA'
           | 'CELULAR'
           | 'LAPTOP'
-          | 'NOTEBOOK'
           | 'TABLET'
           | 'SMARTWATCH'
           | 'IMPRESORA'
@@ -437,7 +414,6 @@ type ColumnTypeOverrides = {
           | 'COMPUTADORA'
           | 'CELULAR'
           | 'LAPTOP'
-          | 'NOTEBOOK'
           | 'TABLET'
           | 'SMARTWATCH'
           | 'IMPRESORA'
@@ -467,30 +443,26 @@ type ColumnTypeOverrides = {
       readonly estado: {
         readonly output:
           | 'RECIBIDO'
-          | 'EN_PROCESO'
-          | 'DIAGNOSTICADO'
+          | 'EN_DIAGNOSTICO'
           | 'PENDIENTE_APROBACION'
+          | 'APROBADO'
           | 'RECHAZADO'
           | 'EN_REPARACION'
-          | 'LISTO_PARA_ENTREGA'
-          | 'ENTREGADO';
+          | 'ESPERANDO_REPUESTO'
+          | 'LISTO'
+          | 'ENTREGADO'
+          | 'CANCELADO';
         readonly input:
           | 'RECIBIDO'
-          | 'EN_PROCESO'
-          | 'DIAGNOSTICADO'
+          | 'EN_DIAGNOSTICO'
           | 'PENDIENTE_APROBACION'
+          | 'APROBADO'
           | 'RECHAZADO'
           | 'EN_REPARACION'
-          | 'LISTO_PARA_ENTREGA'
-          | 'ENTREGADO';
-      };
-      readonly estadoPago: {
-        readonly output: 'PENDIENTE' | 'PAGADO';
-        readonly input: 'PENDIENTE' | 'PAGADO';
-      };
-      readonly metodoPago: {
-        readonly output: 'EFECTIVO' | 'TARJETA' | 'QR';
-        readonly input: 'EFECTIVO' | 'TARJETA' | 'QR';
+          | 'ESPERANDO_REPUESTO'
+          | 'LISTO'
+          | 'ENTREGADO'
+          | 'CANCELADO';
       };
       readonly prioridad: {
         readonly output: 'BAJA' | 'MEDIA' | 'ALTA';
@@ -505,14 +477,14 @@ type ColumnTypeOverrides = {
     };
     readonly Repuestos: {
       readonly estado: {
-        readonly output: 'DISPONIBLE' | 'AGOTADO' | 'EN_REPARACION' | 'DESCATALOGADO';
-        readonly input: 'DISPONIBLE' | 'AGOTADO' | 'EN_REPARACION' | 'DESCATALOGADO';
+        readonly output: 'DISPONIBLE' | 'AGOTADO' | 'EN_REPOSICION' | 'DESCATALOGADO';
+        readonly input: 'DISPONIBLE' | 'AGOTADO' | 'EN_REPOSICION' | 'DESCATALOGADO';
       };
     };
     readonly Usuarios: {
       readonly rol: {
-        readonly output: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'ALMACENISTA';
-        readonly input: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'ALMACENISTA';
+        readonly output: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'GERENTE';
+        readonly input: 'ADMINISTRADOR' | 'TECNICO' | 'RECEPCIONISTA' | 'GERENTE';
       };
     };
   };
@@ -542,29 +514,27 @@ export namespace Models {
     ordenId: FieldOutputTypes['public']['Actividades']['ordenId'];
     precioUnitario: FieldOutputTypes['public']['Actividades']['precioUnitario'];
     servicioId: FieldOutputTypes['public']['Actividades']['servicioId'];
+    trabajoVerificado: FieldOutputTypes['public']['Actividades']['trabajoVerificado'];
     orden: public_Orden;
     servicio: public_Servicios;
     readonly [RelationKeys]?: 'orden' | 'servicio';
   };
   export type public_Clientes = {
-    ciudad: FieldOutputTypes['public']['Clientes']['ciudad'];
+    apellido: FieldOutputTypes['public']['Clientes']['apellido'];
+    createdAt: FieldOutputTypes['public']['Clientes']['createdAt'];
     direccion: FieldOutputTypes['public']['Clientes']['direccion'];
     id: FieldOutputTypes['public']['Clientes']['id'];
     nombre: FieldOutputTypes['public']['Clientes']['nombre'];
-    contactos: public_Contactos[];
+    telefono: FieldOutputTypes['public']['Clientes']['telefono'];
+    updatedAt: FieldOutputTypes['public']['Clientes']['updatedAt'];
     dispositivos: public_Dispositivos[];
-    readonly [RelationKeys]?: 'contactos' | 'dispositivos';
+    readonly [RelationKeys]?: 'dispositivos';
   };
-  export type public_Contactos = {
-    clienteId: FieldOutputTypes['public']['Contactos']['clienteId'];
-    createdAt: FieldOutputTypes['public']['Contactos']['createdAt'];
-    id: FieldOutputTypes['public']['Contactos']['id'];
-    principal: FieldOutputTypes['public']['Contactos']['principal'];
-    tipo: FieldOutputTypes['public']['Contactos']['tipo'];
-    updatedAt: FieldOutputTypes['public']['Contactos']['updatedAt'];
-    valor: FieldOutputTypes['public']['Contactos']['valor'];
-    cliente: public_Clientes;
-    readonly [RelationKeys]?: 'cliente';
+  export type public_Configuracion = {
+    id: FieldOutputTypes['public']['Configuracion']['id'];
+    margenGanancia: FieldOutputTypes['public']['Configuracion']['margenGanancia'];
+    updatedAt: FieldOutputTypes['public']['Configuracion']['updatedAt'];
+    readonly [RelationKeys]?: never;
   };
   export type public_DetalleMovimientos = {
     cantidad: FieldOutputTypes['public']['DetalleMovimientos']['cantidad'];
@@ -576,19 +546,6 @@ export namespace Models {
     movimiento: public_Movimientos;
     repuesto: public_Repuestos;
     readonly [RelationKeys]?: 'movimiento' | 'repuesto';
-  };
-  export type public_DetallePresupuesto = {
-    cantidad: FieldOutputTypes['public']['DetallePresupuesto']['cantidad'];
-    descripcion: FieldOutputTypes['public']['DetallePresupuesto']['descripcion'];
-    id: FieldOutputTypes['public']['DetallePresupuesto']['id'];
-    precioUnitario: FieldOutputTypes['public']['DetallePresupuesto']['precioUnitario'];
-    presupuestoId: FieldOutputTypes['public']['DetallePresupuesto']['presupuestoId'];
-    repuestoId: FieldOutputTypes['public']['DetallePresupuesto']['repuestoId'];
-    servicioId: FieldOutputTypes['public']['DetallePresupuesto']['servicioId'];
-    presupuesto: public_Presupuestos;
-    repuesto: public_Repuestos | null;
-    servicio: public_Servicios;
-    readonly [RelationKeys]?: 'presupuesto' | 'repuesto' | 'servicio';
   };
   export type public_Dispositivos = {
     clienteId: FieldOutputTypes['public']['Dispositivos']['clienteId'];
@@ -625,42 +582,46 @@ export namespace Models {
   export type public_Orden = {
     accesoriosRecibidos: FieldOutputTypes['public']['Orden']['accesoriosRecibidos'];
     codigo: FieldOutputTypes['public']['Orden']['codigo'];
+    codigoCliente: FieldOutputTypes['public']['Orden']['codigoCliente'];
     condicionDispositivo: FieldOutputTypes['public']['Orden']['condicionDispositivo'];
     descuentoAplicado: FieldOutputTypes['public']['Orden']['descuentoAplicado'];
-    diagnostico: FieldOutputTypes['public']['Orden']['diagnostico'];
     dispositivoId: FieldOutputTypes['public']['Orden']['dispositivoId'];
-    entregaConfirmada: FieldOutputTypes['public']['Orden']['entregaConfirmada'];
     estado: FieldOutputTypes['public']['Orden']['estado'];
-    estadoPago: FieldOutputTypes['public']['Orden']['estadoPago'];
     fechaEntrega: FieldOutputTypes['public']['Orden']['fechaEntrega'];
     fechaEstimada: FieldOutputTypes['public']['Orden']['fechaEstimada'];
-    fechaFinalizacion: FieldOutputTypes['public']['Orden']['fechaFinalizacion'];
     fechaIngreso: FieldOutputTypes['public']['Orden']['fechaIngreso'];
-    fechaPago: FieldOutputTypes['public']['Orden']['fechaPago'];
     id: FieldOutputTypes['public']['Orden']['id'];
-    metodoPago: FieldOutputTypes['public']['Orden']['metodoPago'];
     observaciones: FieldOutputTypes['public']['Orden']['observaciones'];
     prioridad: FieldOutputTypes['public']['Orden']['prioridad'];
     problemasReportados: FieldOutputTypes['public']['Orden']['problemasReportados'];
     recepcionistaId: FieldOutputTypes['public']['Orden']['recepcionistaId'];
-    servicioSolicitadoId: FieldOutputTypes['public']['Orden']['servicioSolicitadoId'];
     tecnicoId: FieldOutputTypes['public']['Orden']['tecnicoId'];
-    trabajoVerficado: FieldOutputTypes['public']['Orden']['trabajoVerficado'];
     actividades: public_Actividades[];
     dispositivo: public_Dispositivos;
     movimientos: public_Movimientos[];
     presupuestos: public_Presupuestos[];
     recepcion: public_Usuarios;
-    servicio: public_Servicios | null;
     tecnico: public_Usuarios | null;
     readonly [RelationKeys]?:
-      | 'actividades'
-      | 'dispositivo'
-      | 'movimientos'
-      | 'presupuestos'
-      | 'recepcion'
-      | 'servicio'
-      | 'tecnico';
+      'actividades' | 'dispositivo' | 'movimientos' | 'presupuestos' | 'recepcion' | 'tecnico';
+  };
+  export type public_PresupuestoRepuesto = {
+    cantidad: FieldOutputTypes['public']['PresupuestoRepuesto']['cantidad'];
+    precioUnitario: FieldOutputTypes['public']['PresupuestoRepuesto']['precioUnitario'];
+    presupuestoId: FieldOutputTypes['public']['PresupuestoRepuesto']['presupuestoId'];
+    repuestoId: FieldOutputTypes['public']['PresupuestoRepuesto']['repuestoId'];
+    presupuesto: public_Presupuestos;
+    repuesto: public_Repuestos;
+    readonly [RelationKeys]?: 'presupuesto' | 'repuesto';
+  };
+  export type public_PresupuestoServicio = {
+    cantidad: FieldOutputTypes['public']['PresupuestoServicio']['cantidad'];
+    precioUnitario: FieldOutputTypes['public']['PresupuestoServicio']['precioUnitario'];
+    presupuestoId: FieldOutputTypes['public']['PresupuestoServicio']['presupuestoId'];
+    servicioId: FieldOutputTypes['public']['PresupuestoServicio']['servicioId'];
+    presupuesto: public_Presupuestos;
+    servicio: public_Servicios;
+    readonly [RelationKeys]?: 'presupuesto' | 'servicio';
   };
   export type public_Presupuestos = {
     estado: FieldOutputTypes['public']['Presupuestos']['estado'];
@@ -670,10 +631,12 @@ export namespace Models {
     id: FieldOutputTypes['public']['Presupuestos']['id'];
     observaciones: FieldOutputTypes['public']['Presupuestos']['observaciones'];
     ordenId: FieldOutputTypes['public']['Presupuestos']['ordenId'];
+    total: FieldOutputTypes['public']['Presupuestos']['total'];
     version: FieldOutputTypes['public']['Presupuestos']['version'];
-    detallePresupuesto: public_DetallePresupuesto[];
     orden: public_Orden;
-    readonly [RelationKeys]?: 'detallePresupuesto' | 'orden';
+    presupuestoRepuestos: public_PresupuestoRepuesto[];
+    presupuestoServicios: public_PresupuestoServicio[];
+    readonly [RelationKeys]?: 'orden' | 'presupuestoRepuestos' | 'presupuestoServicios';
   };
   export type public_Repuestos = {
     costoActual: FieldOutputTypes['public']['Repuestos']['costoActual'];
@@ -682,7 +645,7 @@ export namespace Models {
     id: FieldOutputTypes['public']['Repuestos']['id'];
     imgUrl: FieldOutputTypes['public']['Repuestos']['imgUrl'];
     nombre: FieldOutputTypes['public']['Repuestos']['nombre'];
-    precioReferencial: FieldOutputTypes['public']['Repuestos']['precioReferencial'];
+    precioVenta: FieldOutputTypes['public']['Repuestos']['precioVenta'];
     sku: FieldOutputTypes['public']['Repuestos']['sku'];
     unidadesCaja: FieldOutputTypes['public']['Repuestos']['unidadesCaja'];
     updatedAt: FieldOutputTypes['public']['Repuestos']['updatedAt'];
@@ -697,18 +660,20 @@ export namespace Models {
     nombre: FieldOutputTypes['public']['Servicios']['nombre'];
     precioReferencial: FieldOutputTypes['public']['Servicios']['precioReferencial'];
     actividades: public_Actividades[];
-    detallePresupuesto: public_DetallePresupuesto[];
-    readonly [RelationKeys]?: 'actividades' | 'detallePresupuesto';
+    presupuestoServicios: public_PresupuestoServicio[];
+    readonly [RelationKeys]?: 'actividades' | 'presupuestoServicios';
   };
   export type public_Usuarios = {
     DNI: FieldOutputTypes['public']['Usuarios']['DNI'];
     activo: FieldOutputTypes['public']['Usuarios']['activo'];
+    apellido: FieldOutputTypes['public']['Usuarios']['apellido'];
     avatar: FieldOutputTypes['public']['Usuarios']['avatar'];
     createdAt: FieldOutputTypes['public']['Usuarios']['createdAt'];
     id: FieldOutputTypes['public']['Usuarios']['id'];
     nombre: FieldOutputTypes['public']['Usuarios']['nombre'];
     password: FieldOutputTypes['public']['Usuarios']['password'];
     rol: FieldOutputTypes['public']['Usuarios']['rol'];
+    telefono: FieldOutputTypes['public']['Usuarios']['telefono'];
     updatedAt: FieldOutputTypes['public']['Usuarios']['updatedAt'];
     username: FieldOutputTypes['public']['Usuarios']['username'];
     recepcion: public_Orden[];
@@ -721,13 +686,14 @@ export declare const models: {
   public: {
     Actividades: Models.public_Actividades;
     Clientes: Models.public_Clientes;
-    Contactos: Models.public_Contactos;
+    Configuracion: Models.public_Configuracion;
     DetalleMovimientos: Models.public_DetalleMovimientos;
-    DetallePresupuesto: Models.public_DetallePresupuesto;
     Dispositivos: Models.public_Dispositivos;
     Inventario: Models.public_Inventario;
     Movimientos: Models.public_Movimientos;
     Orden: Models.public_Orden;
+    PresupuestoRepuesto: Models.public_PresupuestoRepuesto;
+    PresupuestoServicio: Models.public_PresupuestoServicio;
     Presupuestos: Models.public_Presupuestos;
     Repuestos: Models.public_Repuestos;
     Servicios: Models.public_Servicios;
@@ -818,6 +784,16 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly trabajoVerificado: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                  readonly many: false;
+                };
               };
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [];
@@ -864,10 +840,18 @@ type ContractBase = Omit<
             };
             readonly Clientes: {
               columns: {
-                readonly ciudad: {
+                readonly apellido: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly typeParams: { readonly precision: 3 };
                   readonly many: false;
                 };
                 readonly direccion: {
@@ -892,28 +876,27 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly telefono: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
               };
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [];
               indexes: readonly [];
               foreignKeys: readonly [];
             };
-            readonly Contactos: {
+            readonly Configuracion: {
               columns: {
-                readonly clienteId: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-                readonly createdAt: {
-                  readonly dataType: 'pg/timestamptz';
-                  readonly codecId: 'pg/timestamptz-date@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                  readonly typeParams: { readonly precision: 3 };
-                  readonly many: false;
-                };
                 readonly id: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
@@ -924,24 +907,15 @@ type ContractBase = Omit<
                   };
                   readonly many: false;
                 };
-                readonly principal: {
-                  readonly dataType: 'pg/bool';
-                  readonly codecId: 'pg/bool@1';
+                readonly margenGanancia: {
+                  readonly dataType: 'pg/numeric';
+                  readonly codecId: 'pg/numeric@1';
                   readonly nullable: false;
                   readonly default: {
                     readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                    readonly value: DefaultLiteralValue<'pg/numeric@1', '0.00'>;
                   };
-                  readonly many: false;
-                };
-                readonly tipo: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', 'TELEFONO'>;
-                  };
+                  readonly typeParams: { readonly precision: 5; readonly scale: 2 };
                   readonly many: false;
                 };
                 readonly updatedAt: {
@@ -951,37 +925,11 @@ type ContractBase = Omit<
                   readonly typeParams: { readonly precision: 3 };
                   readonly many: false;
                 };
-                readonly valor: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['valor'] }];
-              indexes: readonly [
-                {
-                  readonly name: 'Contactos_clienteId_idx_7ae16308';
-                  readonly prefix: 'Contactos_clienteId_idx';
-                  readonly columns: readonly ['clienteId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Contactos';
-                    readonly columns: readonly ['clienteId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Clientes';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
             };
             readonly DetalleMovimientos: {
               columns: {
@@ -1069,125 +1017,6 @@ type ContractBase = Omit<
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'DetalleMovimientos';
-                    readonly columns: readonly ['repuestoId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Repuestos';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly DetallePresupuesto: {
-              columns: {
-                readonly cantidad: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
-                  };
-                  readonly many: false;
-                };
-                readonly descripcion: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                  readonly many: false;
-                };
-                readonly id: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                  readonly many: false;
-                };
-                readonly precioUnitario: {
-                  readonly dataType: 'pg/numeric';
-                  readonly codecId: 'pg/numeric@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/numeric@1', '0.00'>;
-                  };
-                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
-                  readonly many: false;
-                };
-                readonly presupuestoId: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-                readonly repuestoId: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: true;
-                  readonly many: false;
-                };
-                readonly servicioId: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
-              indexes: readonly [
-                {
-                  readonly name: 'DetallePresupuesto_presupuestoId_idx_f5e95d09';
-                  readonly prefix: 'DetallePresupuesto_presupuestoId_idx';
-                  readonly columns: readonly ['presupuestoId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'DetallePresupuesto_repuestoId_idx_3de6f292';
-                  readonly prefix: 'DetallePresupuesto_repuestoId_idx';
-                  readonly columns: readonly ['repuestoId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'DetallePresupuesto_servicioId_idx_70be2758';
-                  readonly prefix: 'DetallePresupuesto_servicioId_idx';
-                  readonly columns: readonly ['servicioId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'DetallePresupuesto';
-                    readonly columns: readonly ['presupuestoId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Presupuestos';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'DetallePresupuesto';
-                    readonly columns: readonly ['servicioId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Servicios';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'DetallePresupuesto';
                     readonly columns: readonly ['repuestoId'];
                   };
                   readonly target: {
@@ -1429,6 +1258,12 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly codigoCliente: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
                 readonly condicionDispositivo: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -1446,26 +1281,10 @@ type ContractBase = Omit<
                   readonly typeParams: { readonly precision: 10; readonly scale: 2 };
                   readonly many: false;
                 };
-                readonly diagnostico: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                  readonly many: false;
-                };
                 readonly dispositivoId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
-                  readonly many: false;
-                };
-                readonly entregaConfirmada: {
-                  readonly dataType: 'pg/bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-                  };
                   readonly many: false;
                 };
                 readonly estado: {
@@ -1475,16 +1294,6 @@ type ContractBase = Omit<
                   readonly default: {
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/text@1', 'RECIBIDO'>;
-                  };
-                  readonly many: false;
-                };
-                readonly estadoPago: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDIENTE'>;
                   };
                   readonly many: false;
                 };
@@ -1502,25 +1311,11 @@ type ContractBase = Omit<
                   readonly typeParams: { readonly precision: 3 };
                   readonly many: false;
                 };
-                readonly fechaFinalizacion: {
-                  readonly dataType: 'pg/timestamptz';
-                  readonly codecId: 'pg/timestamptz-date@1';
-                  readonly nullable: true;
-                  readonly typeParams: { readonly precision: 3 };
-                  readonly many: false;
-                };
                 readonly fechaIngreso: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-date@1';
                   readonly nullable: false;
                   readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                  readonly typeParams: { readonly precision: 3 };
-                  readonly many: false;
-                };
-                readonly fechaPago: {
-                  readonly dataType: 'pg/timestamptz';
-                  readonly codecId: 'pg/timestamptz-date@1';
-                  readonly nullable: true;
                   readonly typeParams: { readonly precision: 3 };
                   readonly many: false;
                 };
@@ -1531,16 +1326,6 @@ type ContractBase = Omit<
                   readonly default: {
                     readonly kind: 'function';
                     readonly expression: 'autoincrement()';
-                  };
-                  readonly many: false;
-                };
-                readonly metodoPago: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', 'EFECTIVO'>;
                   };
                   readonly many: false;
                 };
@@ -1572,31 +1357,18 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
-                readonly servicioSolicitadoId: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: true;
-                  readonly many: false;
-                };
                 readonly tecnicoId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: true;
                   readonly many: false;
                 };
-                readonly trabajoVerficado: {
-                  readonly dataType: 'pg/bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-                  };
-                  readonly many: false;
-                };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['codigo'] }];
+              uniques: readonly [
+                { readonly columns: readonly ['codigo'] },
+                { readonly columns: readonly ['codigoCliente'] },
+              ];
               indexes: readonly [
                 {
                   readonly name: 'Orden_dispositivoId_idx_d98b2f4f';
@@ -1608,12 +1380,6 @@ type ContractBase = Omit<
                   readonly name: 'Orden_recepcionistaId_idx_158f4fd1';
                   readonly prefix: 'Orden_recepcionistaId_idx';
                   readonly columns: readonly ['recepcionistaId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'Orden_servicioSolicitadoId_idx_badf2823';
-                  readonly prefix: 'Orden_servicioSolicitadoId_idx';
-                  readonly columns: readonly ['servicioSolicitadoId'];
                   readonly unique: false;
                 },
                 {
@@ -1660,15 +1426,82 @@ type ContractBase = Omit<
                     readonly columns: readonly ['id'];
                   };
                 },
+              ];
+            };
+            readonly PresupuestoRepuesto: {
+              columns: {
+                readonly cantidad: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                  readonly many: false;
+                };
+                readonly precioUnitario: {
+                  readonly dataType: 'pg/numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/numeric@1', '0.00'>;
+                  };
+                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
+                  readonly many: false;
+                };
+                readonly presupuestoId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly repuestoId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['presupuestoId', 'repuestoId'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'PresupuestoRepuesto_presupuestoId_idx_f5e95d09';
+                  readonly prefix: 'PresupuestoRepuesto_presupuestoId_idx';
+                  readonly columns: readonly ['presupuestoId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'PresupuestoRepuesto_repuestoId_idx_3de6f292';
+                  readonly prefix: 'PresupuestoRepuesto_repuestoId_idx';
+                  readonly columns: readonly ['repuestoId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
                 {
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Orden';
-                    readonly columns: readonly ['servicioSolicitadoId'];
+                    readonly tableName: 'PresupuestoRepuesto';
+                    readonly columns: readonly ['presupuestoId'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Servicios';
+                    readonly tableName: 'Presupuestos';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'PresupuestoRepuesto';
+                    readonly columns: readonly ['repuestoId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Repuestos';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -1730,6 +1563,17 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly total: {
+                  readonly dataType: 'pg/numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/numeric@1', '0.00'>;
+                  };
+                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
+                  readonly many: false;
+                };
                 readonly version: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
@@ -1761,6 +1605,85 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Orden';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly PresupuestoServicio: {
+              columns: {
+                readonly cantidad: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                  readonly many: false;
+                };
+                readonly precioUnitario: {
+                  readonly dataType: 'pg/numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/numeric@1', '0.00'>;
+                  };
+                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
+                  readonly many: false;
+                };
+                readonly presupuestoId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly servicioId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['presupuestoId', 'servicioId'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'PresupuestoServicio_presupuestoId_idx_f5e95d09';
+                  readonly prefix: 'PresupuestoServicio_presupuestoId_idx';
+                  readonly columns: readonly ['presupuestoId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'PresupuestoServicio_servicioId_idx_70be2758';
+                  readonly prefix: 'PresupuestoServicio_servicioId_idx';
+                  readonly columns: readonly ['servicioId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'PresupuestoServicio';
+                    readonly columns: readonly ['presupuestoId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Presupuestos';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'PresupuestoServicio';
+                    readonly columns: readonly ['servicioId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Servicios';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -1819,7 +1742,7 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
-                readonly precioReferencial: {
+                readonly precioVenta: {
                   readonly dataType: 'pg/numeric';
                   readonly codecId: 'pg/numeric@1';
                   readonly nullable: false;
@@ -1928,6 +1851,12 @@ type ContractBase = Omit<
                   };
                   readonly many: false;
                 };
+                readonly apellido: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
                 readonly avatar: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -1970,6 +1899,12 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly telefono: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly updatedAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-date@1';
@@ -1998,18 +1933,16 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly [
                 'RECIBIDO',
-                'EN_PROCESO',
-                'DIAGNOSTICADO',
+                'EN_DIAGNOSTICO',
                 'PENDIENTE_APROBACION',
+                'APROBADO',
                 'RECHAZADO',
                 'EN_REPARACION',
-                'LISTO_PARA_ENTREGA',
+                'ESPERANDO_REPUESTO',
+                'LISTO',
                 'ENTREGADO',
+                'CANCELADO',
               ];
-            };
-            readonly EstadoPago: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['PENDIENTE', 'PAGADO'];
             };
             readonly EstadoPresupuesto: {
               readonly kind: 'valueSet';
@@ -2026,11 +1959,7 @@ type ContractBase = Omit<
             };
             readonly EstadoRepuesto: {
               readonly kind: 'valueSet';
-              readonly values: readonly ['DISPONIBLE', 'AGOTADO', 'EN_REPARACION', 'DESCATALOGADO'];
-            };
-            readonly MetodoPago: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['EFECTIVO', 'TARJETA', 'QR'];
+              readonly values: readonly ['DISPONIBLE', 'AGOTADO', 'EN_REPOSICION', 'DESCATALOGADO'];
             };
             readonly Prioridad: {
               readonly kind: 'valueSet';
@@ -2038,28 +1967,7 @@ type ContractBase = Omit<
             };
             readonly Rol: {
               readonly kind: 'valueSet';
-              readonly values: readonly [
-                'ADMINISTRADOR',
-                'TECNICO',
-                'RECEPCIONISTA',
-                'ALMACENISTA',
-              ];
-            };
-            readonly TipoAjuste: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['DESCUENTO', 'RECARGO', 'NORMAL'];
-            };
-            readonly TipoContacto: {
-              readonly kind: 'valueSet';
-              readonly values: readonly [
-                'TELEFONO',
-                'CORREO',
-                'WHATSAPP',
-                'FACEBOOK',
-                'INSTAGRAM',
-                'LINKEDIN',
-                'OTRO',
-              ];
+              readonly values: readonly ['ADMINISTRADOR', 'TECNICO', 'RECEPCIONISTA', 'GERENTE'];
             };
             readonly TipoDispotivo: {
               readonly kind: 'valueSet';
@@ -2067,7 +1975,6 @@ type ContractBase = Omit<
                 'COMPUTADORA',
                 'CELULAR',
                 'LAPTOP',
-                'NOTEBOOK',
                 'TABLET',
                 'SMARTWATCH',
                 'IMPRESORA',
@@ -2102,14 +2009,13 @@ type ContractBase = Omit<
       readonly model: 'Actividades';
     };
     readonly Clientes: { readonly namespace: 'public' & NamespaceId; readonly model: 'Clientes' };
-    readonly Contactos: { readonly namespace: 'public' & NamespaceId; readonly model: 'Contactos' };
+    readonly Configuracion: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'Configuracion';
+    };
     readonly DetalleMovimientos: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'DetalleMovimientos';
-    };
-    readonly DetallePresupuesto: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'DetallePresupuesto';
     };
     readonly Dispositivos: {
       readonly namespace: 'public' & NamespaceId;
@@ -2124,6 +2030,14 @@ type ContractBase = Omit<
       readonly model: 'Movimientos';
     };
     readonly Orden: { readonly namespace: 'public' & NamespaceId; readonly model: 'Orden' };
+    readonly PresupuestoRepuesto: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'PresupuestoRepuesto';
+    };
+    readonly PresupuestoServicio: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'PresupuestoServicio';
+    };
     readonly Presupuestos: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Presupuestos';
@@ -2182,6 +2096,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly trabajoVerificado: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
             };
             readonly relations: {
               readonly orden: {
@@ -2221,14 +2139,23 @@ type ContractBase = Omit<
                 readonly ordenId: { readonly column: 'ordenId' };
                 readonly precioUnitario: { readonly column: 'precioUnitario' };
                 readonly servicioId: { readonly column: 'servicioId' };
+                readonly trabajoVerificado: { readonly column: 'trabajoVerificado' };
               };
             };
           };
           readonly Clientes: {
             readonly fields: {
-              readonly ciudad: {
+              readonly apellido: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
               };
               readonly direccion: {
                 readonly nullable: true;
@@ -2242,19 +2169,20 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-            };
-            readonly relations: {
-              readonly contactos: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Contactos';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['clienteId'];
+              readonly telefono: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly typeParams: { readonly precision: 3 };
                 };
               };
+            };
+            readonly relations: {
               readonly dispositivos: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -2271,38 +2199,29 @@ type ContractBase = Omit<
               readonly table: 'Clientes';
               readonly namespaceId: 'public';
               readonly fields: {
-                readonly ciudad: { readonly column: 'ciudad' };
+                readonly apellido: { readonly column: 'apellido' };
+                readonly createdAt: { readonly column: 'createdAt' };
                 readonly direccion: { readonly column: 'direccion' };
                 readonly id: { readonly column: 'id' };
                 readonly nombre: { readonly column: 'nombre' };
+                readonly telefono: { readonly column: 'telefono' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
           };
-          readonly Contactos: {
+          readonly Configuracion: {
             readonly fields: {
-              readonly clienteId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-date@1';
-                  readonly typeParams: { readonly precision: 3 };
-                };
-              };
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly principal: {
+              readonly margenGanancia: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly tipo: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly typeParams: { readonly precision: 5; readonly scale: 2 };
+                };
               };
               readonly updatedAt: {
                 readonly nullable: false;
@@ -2312,36 +2231,15 @@ type ContractBase = Omit<
                   readonly typeParams: { readonly precision: 3 };
                 };
               };
-              readonly valor: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
             };
-            readonly relations: {
-              readonly cliente: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Clientes';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['clienteId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
+            readonly relations: Record<string, never>;
             readonly storage: {
-              readonly table: 'Contactos';
+              readonly table: 'Configuracion';
               readonly namespaceId: 'public';
               readonly fields: {
-                readonly clienteId: { readonly column: 'clienteId' };
-                readonly createdAt: { readonly column: 'createdAt' };
                 readonly id: { readonly column: 'id' };
-                readonly principal: { readonly column: 'principal' };
-                readonly tipo: { readonly column: 'tipo' };
+                readonly margenGanancia: { readonly column: 'margenGanancia' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
-                readonly valor: { readonly column: 'valor' };
               };
             };
           };
@@ -2416,93 +2314,6 @@ type ContractBase = Omit<
                 readonly movimientoId: { readonly column: 'movimientoId' };
                 readonly precioUnitario: { readonly column: 'precioUnitario' };
                 readonly repuestoId: { readonly column: 'repuestoId' };
-              };
-            };
-          };
-          readonly DetallePresupuesto: {
-            readonly fields: {
-              readonly cantidad: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly descripcion: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly precioUnitario: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/numeric@1';
-                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
-                };
-              };
-              readonly presupuestoId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly repuestoId: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly servicioId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-            };
-            readonly relations: {
-              readonly presupuesto: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Presupuestos';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['presupuestoId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly repuesto: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Repuestos';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: true;
-                readonly on: {
-                  readonly localFields: readonly ['repuestoId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly servicio: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Servicios';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['servicioId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'DetallePresupuesto';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly cantidad: { readonly column: 'cantidad' };
-                readonly descripcion: { readonly column: 'descripcion' };
-                readonly id: { readonly column: 'id' };
-                readonly precioUnitario: { readonly column: 'precioUnitario' };
-                readonly presupuestoId: { readonly column: 'presupuestoId' };
-                readonly repuestoId: { readonly column: 'repuestoId' };
-                readonly servicioId: { readonly column: 'servicioId' };
               };
             };
           };
@@ -2712,6 +2523,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly codigoCliente: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly condicionDispositivo: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2724,23 +2539,11 @@ type ContractBase = Omit<
                   readonly typeParams: { readonly precision: 10; readonly scale: 2 };
                 };
               };
-              readonly diagnostico: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
               readonly dispositivoId: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly entregaConfirmada: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
               readonly estado: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly estadoPago: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -2760,24 +2563,8 @@ type ContractBase = Omit<
                   readonly typeParams: { readonly precision: 3 };
                 };
               };
-              readonly fechaFinalizacion: {
-                readonly nullable: true;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-date@1';
-                  readonly typeParams: { readonly precision: 3 };
-                };
-              };
               readonly fechaIngreso: {
                 readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-date@1';
-                  readonly typeParams: { readonly precision: 3 };
-                };
-              };
-              readonly fechaPago: {
-                readonly nullable: true;
                 readonly type: {
                   readonly kind: 'scalar';
                   readonly codecId: 'pg/timestamptz-date@1';
@@ -2787,10 +2574,6 @@ type ContractBase = Omit<
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly metodoPago: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly observaciones: {
                 readonly nullable: true;
@@ -2808,17 +2591,9 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly servicioSolicitadoId: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
               readonly tecnicoId: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly trabajoVerficado: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
             };
             readonly relations: {
@@ -2879,18 +2654,6 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
-              readonly servicio: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Servicios';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: true;
-                readonly on: {
-                  readonly localFields: readonly ['servicioSolicitadoId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
               readonly tecnico: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -2910,27 +2673,80 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly accesoriosRecibidos: { readonly column: 'accesoriosRecibidos' };
                 readonly codigo: { readonly column: 'codigo' };
+                readonly codigoCliente: { readonly column: 'codigoCliente' };
                 readonly condicionDispositivo: { readonly column: 'condicionDispositivo' };
                 readonly descuentoAplicado: { readonly column: 'descuentoAplicado' };
-                readonly diagnostico: { readonly column: 'diagnostico' };
                 readonly dispositivoId: { readonly column: 'dispositivoId' };
-                readonly entregaConfirmada: { readonly column: 'entregaConfirmada' };
                 readonly estado: { readonly column: 'estado' };
-                readonly estadoPago: { readonly column: 'estadoPago' };
                 readonly fechaEntrega: { readonly column: 'fechaEntrega' };
                 readonly fechaEstimada: { readonly column: 'fechaEstimada' };
-                readonly fechaFinalizacion: { readonly column: 'fechaFinalizacion' };
                 readonly fechaIngreso: { readonly column: 'fechaIngreso' };
-                readonly fechaPago: { readonly column: 'fechaPago' };
                 readonly id: { readonly column: 'id' };
-                readonly metodoPago: { readonly column: 'metodoPago' };
                 readonly observaciones: { readonly column: 'observaciones' };
                 readonly prioridad: { readonly column: 'prioridad' };
                 readonly problemasReportados: { readonly column: 'problemasReportados' };
                 readonly recepcionistaId: { readonly column: 'recepcionistaId' };
-                readonly servicioSolicitadoId: { readonly column: 'servicioSolicitadoId' };
                 readonly tecnicoId: { readonly column: 'tecnicoId' };
-                readonly trabajoVerficado: { readonly column: 'trabajoVerficado' };
+              };
+            };
+          };
+          readonly PresupuestoRepuesto: {
+            readonly fields: {
+              readonly cantidad: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly precioUnitario: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
+                };
+              };
+              readonly presupuestoId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly repuestoId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly presupuesto: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Presupuestos';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['presupuestoId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly repuesto: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Repuestos';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['repuestoId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'PresupuestoRepuesto';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly cantidad: { readonly column: 'cantidad' };
+                readonly precioUnitario: { readonly column: 'precioUnitario' };
+                readonly presupuestoId: { readonly column: 'presupuestoId' };
+                readonly repuestoId: { readonly column: 'repuestoId' };
               };
             };
           };
@@ -2976,23 +2792,20 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly total: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
+                };
+              };
               readonly version: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
             };
             readonly relations: {
-              readonly detallePresupuesto: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'DetallePresupuesto';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['presupuestoId'];
-                };
-              };
               readonly orden: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -3003,6 +2816,28 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['ordenId'];
                   readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly presupuestoRepuestos: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PresupuestoRepuesto';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['presupuestoId'];
+                };
+              };
+              readonly presupuestoServicios: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PresupuestoServicio';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['presupuestoId'];
                 };
               };
             };
@@ -3017,7 +2852,68 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly observaciones: { readonly column: 'observaciones' };
                 readonly ordenId: { readonly column: 'ordenId' };
+                readonly total: { readonly column: 'total' };
                 readonly version: { readonly column: 'version' };
+              };
+            };
+          };
+          readonly PresupuestoServicio: {
+            readonly fields: {
+              readonly cantidad: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly precioUnitario: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
+                };
+              };
+              readonly presupuestoId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly servicioId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly presupuesto: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Presupuestos';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['presupuestoId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly servicio: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Servicios';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['servicioId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'PresupuestoServicio';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly cantidad: { readonly column: 'cantidad' };
+                readonly precioUnitario: { readonly column: 'precioUnitario' };
+                readonly presupuestoId: { readonly column: 'presupuestoId' };
+                readonly servicioId: { readonly column: 'servicioId' };
               };
             };
           };
@@ -3055,7 +2951,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly precioReferencial: {
+              readonly precioVenta: {
                 readonly nullable: false;
                 readonly type: {
                   readonly kind: 'scalar';
@@ -3114,7 +3010,7 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly imgUrl: { readonly column: 'imgUrl' };
                 readonly nombre: { readonly column: 'nombre' };
-                readonly precioReferencial: { readonly column: 'precioReferencial' };
+                readonly precioVenta: { readonly column: 'precioVenta' };
                 readonly sku: { readonly column: 'sku' };
                 readonly unidadesCaja: { readonly column: 'unidadesCaja' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
@@ -3160,10 +3056,10 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['servicioId'];
                 };
               };
-              readonly detallePresupuesto: {
+              readonly presupuestoServicios: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'DetallePresupuesto';
+                  readonly model: 'PresupuestoServicio';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -3194,6 +3090,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly apellido: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly avatar: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -3220,6 +3120,10 @@ type ContractBase = Omit<
               };
               readonly rol: {
                 readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly telefono: {
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly updatedAt: {
@@ -3265,12 +3169,14 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly DNI: { readonly column: 'DNI' };
                 readonly activo: { readonly column: 'activo' };
+                readonly apellido: { readonly column: 'apellido' };
                 readonly avatar: { readonly column: 'avatar' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly id: { readonly column: 'id' };
                 readonly nombre: { readonly column: 'nombre' };
                 readonly password: { readonly column: 'password' };
                 readonly rol: { readonly column: 'rol' };
+                readonly telefono: { readonly column: 'telefono' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly username: { readonly column: 'username' };
               };
@@ -3282,20 +3188,15 @@ type ContractBase = Omit<
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
               { readonly name: 'RECIBIDO'; readonly value: 'RECIBIDO' },
-              { readonly name: 'EN_PROCESO'; readonly value: 'EN_PROCESO' },
-              { readonly name: 'DIAGNOSTICADO'; readonly value: 'DIAGNOSTICADO' },
+              { readonly name: 'EN_DIAGNOSTICO'; readonly value: 'EN_DIAGNOSTICO' },
               { readonly name: 'PENDIENTE_APROBACION'; readonly value: 'PENDIENTE_APROBACION' },
+              { readonly name: 'APROBADO'; readonly value: 'APROBADO' },
               { readonly name: 'RECHAZADO'; readonly value: 'RECHAZADO' },
               { readonly name: 'EN_REPARACION'; readonly value: 'EN_REPARACION' },
-              { readonly name: 'LISTO_PARA_ENTREGA'; readonly value: 'LISTO_PARA_ENTREGA' },
+              { readonly name: 'ESPERANDO_REPUESTO'; readonly value: 'ESPERANDO_REPUESTO' },
+              { readonly name: 'LISTO'; readonly value: 'LISTO' },
               { readonly name: 'ENTREGADO'; readonly value: 'ENTREGADO' },
-            ];
-          };
-          readonly EstadoPago: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'PENDIENTE'; readonly value: 'PENDIENTE' },
-              { readonly name: 'PAGADO'; readonly value: 'PAGADO' },
+              { readonly name: 'CANCELADO'; readonly value: 'CANCELADO' },
             ];
           };
           readonly EstadoPresupuesto: {
@@ -3321,16 +3222,8 @@ type ContractBase = Omit<
             readonly members: readonly [
               { readonly name: 'DISPONIBLE'; readonly value: 'DISPONIBLE' },
               { readonly name: 'AGOTADO'; readonly value: 'AGOTADO' },
-              { readonly name: 'EN_REPARACION'; readonly value: 'EN_REPARACION' },
+              { readonly name: 'EN_REPOSICION'; readonly value: 'EN_REPOSICION' },
               { readonly name: 'DESCATALOGADO'; readonly value: 'DESCATALOGADO' },
-            ];
-          };
-          readonly MetodoPago: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'EFECTIVO'; readonly value: 'EFECTIVO' },
-              { readonly name: 'TARJETA'; readonly value: 'TARJETA' },
-              { readonly name: 'QR'; readonly value: 'QR' },
             ];
           };
           readonly Prioridad: {
@@ -3347,27 +3240,7 @@ type ContractBase = Omit<
               { readonly name: 'ADMINISTRADOR'; readonly value: 'ADMINISTRADOR' },
               { readonly name: 'TECNICO'; readonly value: 'TECNICO' },
               { readonly name: 'RECEPCIONISTA'; readonly value: 'RECEPCIONISTA' },
-              { readonly name: 'ALMACENISTA'; readonly value: 'ALMACENISTA' },
-            ];
-          };
-          readonly TipoAjuste: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'DESCUENTO'; readonly value: 'DESCUENTO' },
-              { readonly name: 'RECARGO'; readonly value: 'RECARGO' },
-              { readonly name: 'NORMAL'; readonly value: 'NORMAL' },
-            ];
-          };
-          readonly TipoContacto: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'TELEFONO'; readonly value: 'TELEFONO' },
-              { readonly name: 'CORREO'; readonly value: 'CORREO' },
-              { readonly name: 'WHATSAPP'; readonly value: 'WHATSAPP' },
-              { readonly name: 'FACEBOOK'; readonly value: 'FACEBOOK' },
-              { readonly name: 'INSTAGRAM'; readonly value: 'INSTAGRAM' },
-              { readonly name: 'LINKEDIN'; readonly value: 'LINKEDIN' },
-              { readonly name: 'OTRO'; readonly value: 'OTRO' },
+              { readonly name: 'GERENTE'; readonly value: 'GERENTE' },
             ];
           };
           readonly TipoDispotivo: {
@@ -3376,7 +3249,6 @@ type ContractBase = Omit<
               { readonly name: 'COMPUTADORA'; readonly value: 'COMPUTADORA' },
               { readonly name: 'CELULAR'; readonly value: 'CELULAR' },
               { readonly name: 'LAPTOP'; readonly value: 'LAPTOP' },
-              { readonly name: 'NOTEBOOK'; readonly value: 'NOTEBOOK' },
               { readonly name: 'TABLET'; readonly value: 'TABLET' },
               { readonly name: 'SMARTWATCH'; readonly value: 'SMARTWATCH' },
               { readonly name: 'IMPRESORA'; readonly value: 'IMPRESORA' },
@@ -3399,17 +3271,15 @@ type ContractBase = Omit<
         readonly enumMemberTypes?: {
           readonly EstadoOrden: readonly [
             { readonly name: 'RECIBIDO'; readonly value: 'RECIBIDO' },
-            { readonly name: 'EN_PROCESO'; readonly value: 'EN_PROCESO' },
-            { readonly name: 'DIAGNOSTICADO'; readonly value: 'DIAGNOSTICADO' },
+            { readonly name: 'EN_DIAGNOSTICO'; readonly value: 'EN_DIAGNOSTICO' },
             { readonly name: 'PENDIENTE_APROBACION'; readonly value: 'PENDIENTE_APROBACION' },
+            { readonly name: 'APROBADO'; readonly value: 'APROBADO' },
             { readonly name: 'RECHAZADO'; readonly value: 'RECHAZADO' },
             { readonly name: 'EN_REPARACION'; readonly value: 'EN_REPARACION' },
-            { readonly name: 'LISTO_PARA_ENTREGA'; readonly value: 'LISTO_PARA_ENTREGA' },
+            { readonly name: 'ESPERANDO_REPUESTO'; readonly value: 'ESPERANDO_REPUESTO' },
+            { readonly name: 'LISTO'; readonly value: 'LISTO' },
             { readonly name: 'ENTREGADO'; readonly value: 'ENTREGADO' },
-          ];
-          readonly EstadoPago: readonly [
-            { readonly name: 'PENDIENTE'; readonly value: 'PENDIENTE' },
-            { readonly name: 'PAGADO'; readonly value: 'PAGADO' },
+            { readonly name: 'CANCELADO'; readonly value: 'CANCELADO' },
           ];
           readonly EstadoPresupuesto: readonly [
             { readonly name: 'PENDIENTE_APROBACION'; readonly value: 'PENDIENTE_APROBACION' },
@@ -3426,13 +3296,8 @@ type ContractBase = Omit<
           readonly EstadoRepuesto: readonly [
             { readonly name: 'DISPONIBLE'; readonly value: 'DISPONIBLE' },
             { readonly name: 'AGOTADO'; readonly value: 'AGOTADO' },
-            { readonly name: 'EN_REPARACION'; readonly value: 'EN_REPARACION' },
+            { readonly name: 'EN_REPOSICION'; readonly value: 'EN_REPOSICION' },
             { readonly name: 'DESCATALOGADO'; readonly value: 'DESCATALOGADO' },
-          ];
-          readonly MetodoPago: readonly [
-            { readonly name: 'EFECTIVO'; readonly value: 'EFECTIVO' },
-            { readonly name: 'TARJETA'; readonly value: 'TARJETA' },
-            { readonly name: 'QR'; readonly value: 'QR' },
           ];
           readonly Prioridad: readonly [
             { readonly name: 'BAJA'; readonly value: 'BAJA' },
@@ -3443,27 +3308,12 @@ type ContractBase = Omit<
             { readonly name: 'ADMINISTRADOR'; readonly value: 'ADMINISTRADOR' },
             { readonly name: 'TECNICO'; readonly value: 'TECNICO' },
             { readonly name: 'RECEPCIONISTA'; readonly value: 'RECEPCIONISTA' },
-            { readonly name: 'ALMACENISTA'; readonly value: 'ALMACENISTA' },
-          ];
-          readonly TipoAjuste: readonly [
-            { readonly name: 'DESCUENTO'; readonly value: 'DESCUENTO' },
-            { readonly name: 'RECARGO'; readonly value: 'RECARGO' },
-            { readonly name: 'NORMAL'; readonly value: 'NORMAL' },
-          ];
-          readonly TipoContacto: readonly [
-            { readonly name: 'TELEFONO'; readonly value: 'TELEFONO' },
-            { readonly name: 'CORREO'; readonly value: 'CORREO' },
-            { readonly name: 'WHATSAPP'; readonly value: 'WHATSAPP' },
-            { readonly name: 'FACEBOOK'; readonly value: 'FACEBOOK' },
-            { readonly name: 'INSTAGRAM'; readonly value: 'INSTAGRAM' },
-            { readonly name: 'LINKEDIN'; readonly value: 'LINKEDIN' },
-            { readonly name: 'OTRO'; readonly value: 'OTRO' },
+            { readonly name: 'GERENTE'; readonly value: 'GERENTE' },
           ];
           readonly TipoDispotivo: readonly [
             { readonly name: 'COMPUTADORA'; readonly value: 'COMPUTADORA' },
             { readonly name: 'CELULAR'; readonly value: 'CELULAR' },
             { readonly name: 'LAPTOP'; readonly value: 'LAPTOP' },
-            { readonly name: 'NOTEBOOK'; readonly value: 'NOTEBOOK' },
             { readonly name: 'TABLET'; readonly value: 'TABLET' },
             { readonly name: 'SMARTWATCH'; readonly value: 'SMARTWATCH' },
             { readonly name: 'IMPRESORA'; readonly value: 'IMPRESORA' },
@@ -3522,7 +3372,7 @@ type ContractBase = Omit<
             readonly params: { readonly precision: 3 };
           };
           readonly ref: {
-            readonly entry: 'Contactos';
+            readonly entry: 'Clientes';
             readonly field: 'createdAt';
             readonly namespace: 'public';
           };
@@ -3539,7 +3389,24 @@ type ContractBase = Omit<
             readonly params: { readonly precision: 3 };
           };
           readonly ref: {
-            readonly entry: 'Contactos';
+            readonly entry: 'Clientes';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly onUpdate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly ref: {
+            readonly entry: 'Configuracion';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };

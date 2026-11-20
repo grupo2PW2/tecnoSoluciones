@@ -12,16 +12,12 @@
       "model": "Clientes",
       "namespace": "public"
     },
-    "Contactos": {
-      "model": "Contactos",
+    "Configuracion": {
+      "model": "Configuracion",
       "namespace": "public"
     },
     "DetalleMovimientos": {
       "model": "DetalleMovimientos",
-      "namespace": "public"
-    },
-    "DetallePresupuesto": {
-      "model": "DetallePresupuesto",
       "namespace": "public"
     },
     "Dispositivos": {
@@ -38,6 +34,14 @@
     },
     "Orden": {
       "model": "Orden",
+      "namespace": "public"
+    },
+    "PresupuestoRepuesto": {
+      "model": "PresupuestoRepuesto",
+      "namespace": "public"
+    },
+    "PresupuestoServicio": {
+      "model": "PresupuestoServicio",
       "namespace": "public"
     },
     "Presupuestos": {
@@ -69,16 +73,16 @@
                 "value": "RECIBIDO"
               },
               {
-                "name": "EN_PROCESO",
-                "value": "EN_PROCESO"
-              },
-              {
-                "name": "DIAGNOSTICADO",
-                "value": "DIAGNOSTICADO"
+                "name": "EN_DIAGNOSTICO",
+                "value": "EN_DIAGNOSTICO"
               },
               {
                 "name": "PENDIENTE_APROBACION",
                 "value": "PENDIENTE_APROBACION"
+              },
+              {
+                "name": "APROBADO",
+                "value": "APROBADO"
               },
               {
                 "name": "RECHAZADO",
@@ -89,25 +93,20 @@
                 "value": "EN_REPARACION"
               },
               {
-                "name": "LISTO_PARA_ENTREGA",
-                "value": "LISTO_PARA_ENTREGA"
+                "name": "ESPERANDO_REPUESTO",
+                "value": "ESPERANDO_REPUESTO"
+              },
+              {
+                "name": "LISTO",
+                "value": "LISTO"
               },
               {
                 "name": "ENTREGADO",
                 "value": "ENTREGADO"
-              }
-            ]
-          },
-          "EstadoPago": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "PENDIENTE",
-                "value": "PENDIENTE"
               },
               {
-                "name": "PAGADO",
-                "value": "PAGADO"
+                "name": "CANCELADO",
+                "value": "CANCELADO"
               }
             ]
           },
@@ -165,29 +164,12 @@
                 "value": "AGOTADO"
               },
               {
-                "name": "EN_REPARACION",
-                "value": "EN_REPARACION"
+                "name": "EN_REPOSICION",
+                "value": "EN_REPOSICION"
               },
               {
                 "name": "DESCATALOGADO",
                 "value": "DESCATALOGADO"
-              }
-            ]
-          },
-          "MetodoPago": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "EFECTIVO",
-                "value": "EFECTIVO"
-              },
-              {
-                "name": "TARJETA",
-                "value": "TARJETA"
-              },
-              {
-                "name": "QR",
-                "value": "QR"
               }
             ]
           },
@@ -224,58 +206,8 @@
                 "value": "RECEPCIONISTA"
               },
               {
-                "name": "ALMACENISTA",
-                "value": "ALMACENISTA"
-              }
-            ]
-          },
-          "TipoAjuste": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "DESCUENTO",
-                "value": "DESCUENTO"
-              },
-              {
-                "name": "RECARGO",
-                "value": "RECARGO"
-              },
-              {
-                "name": "NORMAL",
-                "value": "NORMAL"
-              }
-            ]
-          },
-          "TipoContacto": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "TELEFONO",
-                "value": "TELEFONO"
-              },
-              {
-                "name": "CORREO",
-                "value": "CORREO"
-              },
-              {
-                "name": "WHATSAPP",
-                "value": "WHATSAPP"
-              },
-              {
-                "name": "FACEBOOK",
-                "value": "FACEBOOK"
-              },
-              {
-                "name": "INSTAGRAM",
-                "value": "INSTAGRAM"
-              },
-              {
-                "name": "LINKEDIN",
-                "value": "LINKEDIN"
-              },
-              {
-                "name": "OTRO",
-                "value": "OTRO"
+                "name": "GERENTE",
+                "value": "GERENTE"
               }
             ]
           },
@@ -293,10 +225,6 @@
               {
                 "name": "LAPTOP",
                 "value": "LAPTOP"
-              },
-              {
-                "name": "NOTEBOOK",
-                "value": "NOTEBOOK"
               },
               {
                 "name": "TABLET",
@@ -424,6 +352,13 @@
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
+              },
+              "trabajoVerificado": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
               }
             },
             "relations": {
@@ -485,6 +420,9 @@
                 },
                 "servicioId": {
                   "column": "servicioId"
+                },
+                "trabajoVerificado": {
+                  "column": "trabajoVerificado"
                 }
               },
               "namespaceId": "public",
@@ -493,11 +431,21 @@
           },
           "Clientes": {
             "fields": {
-              "ciudad": {
+              "apellido": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
                 }
               },
               "direccion": {
@@ -520,24 +468,26 @@
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
+              },
+              "telefono": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
               }
             },
             "relations": {
-              "contactos": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "clienteId"
-                  ]
-                },
-                "to": {
-                  "model": "Contactos",
-                  "namespace": "public"
-                }
-              },
               "dispositivos": {
                 "cardinality": "1:N",
                 "on": {
@@ -556,8 +506,11 @@
             },
             "storage": {
               "fields": {
-                "ciudad": {
-                  "column": "ciudad"
+                "apellido": {
+                  "column": "apellido"
+                },
+                "createdAt": {
+                  "column": "createdAt"
                 },
                 "direccion": {
                   "column": "direccion"
@@ -567,31 +520,20 @@
                 },
                 "nombre": {
                   "column": "nombre"
+                },
+                "telefono": {
+                  "column": "telefono"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
                 }
               },
               "namespaceId": "public",
               "table": "Clientes"
             }
           },
-          "Contactos": {
+          "Configuracion": {
             "fields": {
-              "clienteId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "createdAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-date@1",
-                  "kind": "scalar",
-                  "typeParams": {
-                    "precision": 3
-                  }
-                }
-              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -599,24 +541,15 @@
                   "kind": "scalar"
                 }
               },
-              "principal": {
+              "margenGanancia": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/bool@1",
-                  "kind": "scalar"
-                }
-              },
-              "tipo": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "TipoContacto",
-                  "namespaceId": "public",
-                  "plane": "domain"
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 5,
+                    "scale": 2
+                  }
                 }
               },
               "updatedAt": {
@@ -628,59 +561,23 @@
                     "precision": 3
                   }
                 }
-              },
-              "valor": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
               }
             },
-            "relations": {
-              "cliente": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "clienteId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Clientes",
-                  "namespace": "public"
-                }
-              }
-            },
+            "relations": {},
             "storage": {
               "fields": {
-                "clienteId": {
-                  "column": "clienteId"
-                },
-                "createdAt": {
-                  "column": "createdAt"
-                },
                 "id": {
                   "column": "id"
                 },
-                "principal": {
-                  "column": "principal"
-                },
-                "tipo": {
-                  "column": "tipo"
+                "margenGanancia": {
+                  "column": "margenGanancia"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
-                },
-                "valor": {
-                  "column": "valor"
                 }
               },
               "namespaceId": "public",
-              "table": "Contactos"
+              "table": "Configuracion"
             }
           },
           "DetalleMovimientos": {
@@ -793,140 +690,6 @@
               },
               "namespaceId": "public",
               "table": "DetalleMovimientos"
-            }
-          },
-          "DetallePresupuesto": {
-            "fields": {
-              "cantidad": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "descripcion": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "precioUnitario": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/numeric@1",
-                  "kind": "scalar",
-                  "typeParams": {
-                    "precision": 10,
-                    "scale": 2
-                  }
-                }
-              },
-              "presupuestoId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "repuestoId": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "servicioId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "presupuesto": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "presupuestoId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Presupuestos",
-                  "namespace": "public"
-                }
-              },
-              "repuesto": {
-                "cardinality": "N:1",
-                "nullable": true,
-                "on": {
-                  "localFields": [
-                    "repuestoId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Repuestos",
-                  "namespace": "public"
-                }
-              },
-              "servicio": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "servicioId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Servicios",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "cantidad": {
-                  "column": "cantidad"
-                },
-                "descripcion": {
-                  "column": "descripcion"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "precioUnitario": {
-                  "column": "precioUnitario"
-                },
-                "presupuestoId": {
-                  "column": "presupuestoId"
-                },
-                "repuestoId": {
-                  "column": "repuestoId"
-                },
-                "servicioId": {
-                  "column": "servicioId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "DetallePresupuesto"
             }
           },
           "Dispositivos": {
@@ -1260,6 +1023,13 @@
                   "kind": "scalar"
                 }
               },
+              "codigoCliente": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "condicionDispositivo": {
                 "nullable": true,
                 "type": {
@@ -1278,24 +1048,10 @@
                   }
                 }
               },
-              "diagnostico": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
               "dispositivoId": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "entregaConfirmada": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/bool@1",
                   "kind": "scalar"
                 }
               },
@@ -1308,19 +1064,6 @@
                 "valueSet": {
                   "entityKind": "enum",
                   "entityName": "EstadoOrden",
-                  "namespaceId": "public",
-                  "plane": "domain"
-                }
-              },
-              "estadoPago": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "EstadoPago",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -1345,28 +1088,8 @@
                   }
                 }
               },
-              "fechaFinalizacion": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/timestamptz-date@1",
-                  "kind": "scalar",
-                  "typeParams": {
-                    "precision": 3
-                  }
-                }
-              },
               "fechaIngreso": {
                 "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-date@1",
-                  "kind": "scalar",
-                  "typeParams": {
-                    "precision": 3
-                  }
-                }
-              },
-              "fechaPago": {
-                "nullable": true,
                 "type": {
                   "codecId": "pg/timestamptz-date@1",
                   "kind": "scalar",
@@ -1380,19 +1103,6 @@
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
-                }
-              },
-              "metodoPago": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "MetodoPago",
-                  "namespaceId": "public",
-                  "plane": "domain"
                 }
               },
               "observaciones": {
@@ -1429,24 +1139,10 @@
                   "kind": "scalar"
                 }
               },
-              "servicioSolicitadoId": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
               "tecnicoId": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "trabajoVerficado": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/bool@1",
                   "kind": "scalar"
                 }
               }
@@ -1529,22 +1225,6 @@
                   "namespace": "public"
                 }
               },
-              "servicio": {
-                "cardinality": "N:1",
-                "nullable": true,
-                "on": {
-                  "localFields": [
-                    "servicioSolicitadoId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Servicios",
-                  "namespace": "public"
-                }
-              },
               "tecnico": {
                 "cardinality": "N:1",
                 "nullable": true,
@@ -1570,26 +1250,20 @@
                 "codigo": {
                   "column": "codigo"
                 },
+                "codigoCliente": {
+                  "column": "codigoCliente"
+                },
                 "condicionDispositivo": {
                   "column": "condicionDispositivo"
                 },
                 "descuentoAplicado": {
                   "column": "descuentoAplicado"
                 },
-                "diagnostico": {
-                  "column": "diagnostico"
-                },
                 "dispositivoId": {
                   "column": "dispositivoId"
                 },
-                "entregaConfirmada": {
-                  "column": "entregaConfirmada"
-                },
                 "estado": {
                   "column": "estado"
-                },
-                "estadoPago": {
-                  "column": "estadoPago"
                 },
                 "fechaEntrega": {
                   "column": "fechaEntrega"
@@ -1597,20 +1271,11 @@
                 "fechaEstimada": {
                   "column": "fechaEstimada"
                 },
-                "fechaFinalizacion": {
-                  "column": "fechaFinalizacion"
-                },
                 "fechaIngreso": {
                   "column": "fechaIngreso"
                 },
-                "fechaPago": {
-                  "column": "fechaPago"
-                },
                 "id": {
                   "column": "id"
-                },
-                "metodoPago": {
-                  "column": "metodoPago"
                 },
                 "observaciones": {
                   "column": "observaciones"
@@ -1624,18 +1289,188 @@
                 "recepcionistaId": {
                   "column": "recepcionistaId"
                 },
-                "servicioSolicitadoId": {
-                  "column": "servicioSolicitadoId"
-                },
                 "tecnicoId": {
                   "column": "tecnicoId"
-                },
-                "trabajoVerficado": {
-                  "column": "trabajoVerficado"
                 }
               },
               "namespaceId": "public",
               "table": "Orden"
+            }
+          },
+          "PresupuestoRepuesto": {
+            "fields": {
+              "cantidad": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "precioUnitario": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 10,
+                    "scale": 2
+                  }
+                }
+              },
+              "presupuestoId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "repuestoId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "presupuesto": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "presupuestoId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Presupuestos",
+                  "namespace": "public"
+                }
+              },
+              "repuesto": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "repuestoId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Repuestos",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "cantidad": {
+                  "column": "cantidad"
+                },
+                "precioUnitario": {
+                  "column": "precioUnitario"
+                },
+                "presupuestoId": {
+                  "column": "presupuestoId"
+                },
+                "repuestoId": {
+                  "column": "repuestoId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "PresupuestoRepuesto"
+            }
+          },
+          "PresupuestoServicio": {
+            "fields": {
+              "cantidad": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "precioUnitario": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 10,
+                    "scale": 2
+                  }
+                }
+              },
+              "presupuestoId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "servicioId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "presupuesto": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "presupuestoId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Presupuestos",
+                  "namespace": "public"
+                }
+              },
+              "servicio": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "servicioId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Servicios",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "cantidad": {
+                  "column": "cantidad"
+                },
+                "precioUnitario": {
+                  "column": "precioUnitario"
+                },
+                "presupuestoId": {
+                  "column": "presupuestoId"
+                },
+                "servicioId": {
+                  "column": "servicioId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "PresupuestoServicio"
             }
           },
           "Presupuestos": {
@@ -1704,6 +1539,17 @@
                   "kind": "scalar"
                 }
               },
+              "total": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 10,
+                    "scale": 2
+                  }
+                }
+              },
               "version": {
                 "nullable": false,
                 "type": {
@@ -1713,21 +1559,6 @@
               }
             },
             "relations": {
-              "detallePresupuesto": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "presupuestoId"
-                  ]
-                },
-                "to": {
-                  "model": "DetallePresupuesto",
-                  "namespace": "public"
-                }
-              },
               "orden": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -1741,6 +1572,36 @@
                 },
                 "to": {
                   "model": "Orden",
+                  "namespace": "public"
+                }
+              },
+              "presupuestoRepuestos": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "presupuestoId"
+                  ]
+                },
+                "to": {
+                  "model": "PresupuestoRepuesto",
+                  "namespace": "public"
+                }
+              },
+              "presupuestoServicios": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "presupuestoId"
+                  ]
+                },
+                "to": {
+                  "model": "PresupuestoServicio",
                   "namespace": "public"
                 }
               }
@@ -1767,6 +1628,9 @@
                 },
                 "ordenId": {
                   "column": "ordenId"
+                },
+                "total": {
+                  "column": "total"
                 },
                 "version": {
                   "column": "version"
@@ -1833,7 +1697,7 @@
                   "kind": "scalar"
                 }
               },
-              "precioReferencial": {
+              "precioVenta": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/numeric@1",
@@ -1921,8 +1785,8 @@
                 "nombre": {
                   "column": "nombre"
                 },
-                "precioReferencial": {
-                  "column": "precioReferencial"
+                "precioVenta": {
+                  "column": "precioVenta"
                 },
                 "sku": {
                   "column": "sku"
@@ -1996,7 +1860,7 @@
                   "namespace": "public"
                 }
               },
-              "detallePresupuesto": {
+              "presupuestoServicios": {
                 "cardinality": "1:N",
                 "on": {
                   "localFields": [
@@ -2007,7 +1871,7 @@
                   ]
                 },
                 "to": {
-                  "model": "DetallePresupuesto",
+                  "model": "PresupuestoServicio",
                   "namespace": "public"
                 }
               }
@@ -2047,6 +1911,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "apellido": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -2099,6 +1970,13 @@
                   "entityName": "Rol",
                   "namespaceId": "public",
                   "plane": "domain"
+                }
+              },
+              "telefono": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
                 }
               },
               "updatedAt": {
@@ -2159,6 +2037,9 @@
                 "activo": {
                   "column": "activo"
                 },
+                "apellido": {
+                  "column": "apellido"
+                },
                 "avatar": {
                   "column": "avatar"
                 },
@@ -2176,6 +2057,9 @@
                 },
                 "rol": {
                   "column": "rol"
+                },
+                "telefono": {
+                  "column": "telefono"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -2273,6 +2157,15 @@
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": false
+                },
+                "trabajoVerificado": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nullable": false
                 }
               },
               "foreignKeys": [
@@ -2280,6 +2173,7 @@
                   "index": {
                     "name": "Actividades_ordenId_idx_b087098b"
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "ordenId"
@@ -2299,6 +2193,7 @@
                   "index": {
                     "name": "Actividades_servicioId_idx_70be2758"
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "servicioId"
@@ -2342,10 +2237,22 @@
             },
             "Clientes": {
               "columns": {
-                "ciudad": {
+                "apellido": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
                 },
                 "direccion": {
                   "codecId": "pg/text@1",
@@ -2365,6 +2272,19 @@
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
+                },
+                "telefono": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
                 }
               },
               "foreignKeys": [],
@@ -2376,32 +2296,8 @@
               },
               "uniques": []
             },
-            "Contactos": {
-              "checks": [
-                {
-                  "expression": "\"tipo\" IN ('TELEFONO', 'CORREO', 'WHATSAPP', 'FACEBOOK', 'INSTAGRAM', 'LINKEDIN', 'OTRO')",
-                  "name": "Contactos_tipo_check_6ab8911b",
-                  "prefix": "Contactos_tipo_check"
-                }
-              ],
+            "Configuracion": {
               "columns": {
-                "clienteId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                },
-                "createdAt": {
-                  "codecId": "pg/timestamptz-date@1",
-                  "dataType": "pg/timestamptz",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nullable": false,
-                  "typeParams": {
-                    "precision": 3
-                  }
-                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
@@ -2411,28 +2307,17 @@
                   },
                   "nullable": false
                 },
-                "principal": {
-                  "codecId": "pg/bool@1",
-                  "dataType": "pg/bool",
+                "margenGanancia": {
+                  "codecId": "pg/numeric@1",
+                  "dataType": "pg/numeric",
                   "default": {
                     "kind": "literal",
-                    "value": false
-                  },
-                  "nullable": false
-                },
-                "tipo": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "default": {
-                    "kind": "literal",
-                    "value": "TELEFONO"
+                    "value": "0.00"
                   },
                   "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "TipoContacto",
-                    "namespaceId": "public",
-                    "plane": "storage"
+                  "typeParams": {
+                    "precision": 5,
+                    "scale": 2
                   }
                 },
                 "updatedAt": {
@@ -2442,56 +2327,16 @@
                   "typeParams": {
                     "precision": 3
                   }
-                },
-                "valor": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": false
                 }
               },
-              "foreignKeys": [
-                {
-                  "index": {
-                    "name": "Contactos_clienteId_idx_7ae16308"
-                  },
-                  "source": {
-                    "columns": [
-                      "clienteId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Contactos"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Clientes"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "clienteId"
-                  ],
-                  "name": "Contactos_clienteId_idx_7ae16308",
-                  "prefix": "Contactos_clienteId_idx",
-                  "unique": false
-                }
-              ],
+              "foreignKeys": [],
+              "indexes": [],
               "primaryKey": {
                 "columns": [
                   "id"
                 ]
               },
-              "uniques": [
-                {
-                  "columns": [
-                    "valor"
-                  ]
-                }
-              ]
+              "uniques": []
             },
             "DetalleMovimientos": {
               "columns": {
@@ -2551,6 +2396,7 @@
                   "index": {
                     "name": "DetalleMovimientos_movimientoId_idx_cf1459a7"
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "movimientoId"
@@ -2570,6 +2416,7 @@
                   "index": {
                     "name": "DetalleMovimientos_repuestoId_idx_3de6f292"
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "repuestoId"
@@ -2611,157 +2458,11 @@
               },
               "uniques": []
             },
-            "DetallePresupuesto": {
-              "columns": {
-                "cantidad": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "default": {
-                    "kind": "literal",
-                    "value": 1
-                  },
-                  "nullable": false
-                },
-                "descripcion": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": true
-                },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nullable": false
-                },
-                "precioUnitario": {
-                  "codecId": "pg/numeric@1",
-                  "dataType": "pg/numeric",
-                  "default": {
-                    "kind": "literal",
-                    "value": "0.00"
-                  },
-                  "nullable": false,
-                  "typeParams": {
-                    "precision": 10,
-                    "scale": 2
-                  }
-                },
-                "presupuestoId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                },
-                "repuestoId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
-                },
-                "servicioId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "index": {
-                    "name": "DetallePresupuesto_presupuestoId_idx_f5e95d09"
-                  },
-                  "source": {
-                    "columns": [
-                      "presupuestoId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "DetallePresupuesto"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Presupuestos"
-                  }
-                },
-                {
-                  "index": {
-                    "name": "DetallePresupuesto_servicioId_idx_70be2758"
-                  },
-                  "source": {
-                    "columns": [
-                      "servicioId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "DetallePresupuesto"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Servicios"
-                  }
-                },
-                {
-                  "index": {
-                    "name": "DetallePresupuesto_repuestoId_idx_3de6f292"
-                  },
-                  "source": {
-                    "columns": [
-                      "repuestoId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "DetallePresupuesto"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Repuestos"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "presupuestoId"
-                  ],
-                  "name": "DetallePresupuesto_presupuestoId_idx_f5e95d09",
-                  "prefix": "DetallePresupuesto_presupuestoId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "repuestoId"
-                  ],
-                  "name": "DetallePresupuesto_repuestoId_idx_3de6f292",
-                  "prefix": "DetallePresupuesto_repuestoId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "servicioId"
-                  ],
-                  "name": "DetallePresupuesto_servicioId_idx_70be2758",
-                  "prefix": "DetallePresupuesto_servicioId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": []
-            },
             "Dispositivos": {
               "checks": [
                 {
-                  "expression": "\"tipo\" IN ('COMPUTADORA', 'CELULAR', 'LAPTOP', 'NOTEBOOK', 'TABLET', 'SMARTWATCH', 'IMPRESORA', 'SCANNER', 'OTRO')",
-                  "name": "Dispositivos_tipo_check_66390572",
+                  "expression": "\"tipo\" IN ('COMPUTADORA', 'CELULAR', 'LAPTOP', 'TABLET', 'SMARTWATCH', 'IMPRESORA', 'SCANNER', 'OTRO')",
+                  "name": "Dispositivos_tipo_check_c72aa4c8",
                   "prefix": "Dispositivos_tipo_check"
                 }
               ],
@@ -2821,6 +2522,7 @@
                   "index": {
                     "name": "Dispositivos_clienteId_idx_7ae16308"
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "clienteId"
@@ -2910,6 +2612,7 @@
                       "repuestoId"
                     ]
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "repuestoId"
@@ -3009,6 +2712,7 @@
                   "index": {
                     "name": "Movimientos_ordenId_idx_b087098b"
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "ordenId"
@@ -3045,19 +2749,9 @@
             "Orden": {
               "checks": [
                 {
-                  "expression": "\"estadoPago\" IN ('PENDIENTE', 'PAGADO')",
-                  "name": "Orden_estadoPago_check_19cfff96",
-                  "prefix": "Orden_estadoPago_check"
-                },
-                {
-                  "expression": "\"estado\" IN ('RECIBIDO', 'EN_PROCESO', 'DIAGNOSTICADO', 'PENDIENTE_APROBACION', 'RECHAZADO', 'EN_REPARACION', 'LISTO_PARA_ENTREGA', 'ENTREGADO')",
-                  "name": "Orden_estado_check_e217ed51",
+                  "expression": "\"estado\" IN ('RECIBIDO', 'EN_DIAGNOSTICO', 'PENDIENTE_APROBACION', 'APROBADO', 'RECHAZADO', 'EN_REPARACION', 'ESPERANDO_REPUESTO', 'LISTO', 'ENTREGADO', 'CANCELADO')",
+                  "name": "Orden_estado_check_4cacc206",
                   "prefix": "Orden_estado_check"
-                },
-                {
-                  "expression": "\"metodoPago\" IN ('EFECTIVO', 'TARJETA', 'QR')",
-                  "name": "Orden_metodoPago_check_bd9becdf",
-                  "prefix": "Orden_metodoPago_check"
                 },
                 {
                   "expression": "\"prioridad\" IN ('BAJA', 'MEDIA', 'ALTA')",
@@ -3072,6 +2766,11 @@
                   "nullable": true
                 },
                 "codigo": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "codigoCliente": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
@@ -3094,23 +2793,9 @@
                     "scale": 2
                   }
                 },
-                "diagnostico": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": true
-                },
                 "dispositivoId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
-                },
-                "entregaConfirmada": {
-                  "codecId": "pg/bool@1",
-                  "dataType": "pg/bool",
-                  "default": {
-                    "kind": "literal",
-                    "value": false
-                  },
                   "nullable": false
                 },
                 "estado": {
@@ -3124,21 +2809,6 @@
                   "valueSet": {
                     "entityKind": "valueSet",
                     "entityName": "EstadoOrden",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
-                },
-                "estadoPago": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "default": {
-                    "kind": "literal",
-                    "value": "PENDIENTE"
-                  },
-                  "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "EstadoPago",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
@@ -3159,14 +2829,6 @@
                     "precision": 3
                   }
                 },
-                "fechaFinalizacion": {
-                  "codecId": "pg/timestamptz-date@1",
-                  "dataType": "pg/timestamptz",
-                  "nullable": true,
-                  "typeParams": {
-                    "precision": 3
-                  }
-                },
                 "fechaIngreso": {
                   "codecId": "pg/timestamptz-date@1",
                   "dataType": "pg/timestamptz",
@@ -3179,14 +2841,6 @@
                     "precision": 3
                   }
                 },
-                "fechaPago": {
-                  "codecId": "pg/timestamptz-date@1",
-                  "dataType": "pg/timestamptz",
-                  "nullable": true,
-                  "typeParams": {
-                    "precision": 3
-                  }
-                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
@@ -3195,21 +2849,6 @@
                     "kind": "function"
                   },
                   "nullable": false
-                },
-                "metodoPago": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "default": {
-                    "kind": "literal",
-                    "value": "EFECTIVO"
-                  },
-                  "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "MetodoPago",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
                 },
                 "observaciones": {
                   "codecId": "pg/text@1",
@@ -3241,24 +2880,10 @@
                   "dataType": "pg/int4",
                   "nullable": false
                 },
-                "servicioSolicitadoId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
-                },
                 "tecnicoId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": true
-                },
-                "trabajoVerficado": {
-                  "codecId": "pg/bool@1",
-                  "dataType": "pg/bool",
-                  "default": {
-                    "kind": "literal",
-                    "value": false
-                  },
-                  "nullable": false
                 }
               },
               "foreignKeys": [
@@ -3266,6 +2891,7 @@
                   "index": {
                     "name": "Orden_tecnicoId_idx_e983d88c"
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "tecnicoId"
@@ -3285,6 +2911,7 @@
                   "index": {
                     "name": "Orden_recepcionistaId_idx_158f4fd1"
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "recepcionistaId"
@@ -3304,6 +2931,7 @@
                   "index": {
                     "name": "Orden_dispositivoId_idx_d98b2f4f"
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "dispositivoId"
@@ -3317,25 +2945,6 @@
                     ],
                     "namespaceId": "public",
                     "tableName": "Dispositivos"
-                  }
-                },
-                {
-                  "index": {
-                    "name": "Orden_servicioSolicitadoId_idx_badf2823"
-                  },
-                  "source": {
-                    "columns": [
-                      "servicioSolicitadoId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Orden"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Servicios"
                   }
                 }
               ],
@@ -3358,14 +2967,6 @@
                 },
                 {
                   "columns": [
-                    "servicioSolicitadoId"
-                  ],
-                  "name": "Orden_servicioSolicitadoId_idx_badf2823",
-                  "prefix": "Orden_servicioSolicitadoId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
                     "tecnicoId"
                   ],
                   "name": "Orden_tecnicoId_idx_e983d88c",
@@ -3383,8 +2984,219 @@
                   "columns": [
                     "codigo"
                   ]
+                },
+                {
+                  "columns": [
+                    "codigoCliente"
+                  ]
                 }
               ]
+            },
+            "PresupuestoRepuesto": {
+              "columns": {
+                "cantidad": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nullable": false
+                },
+                "precioUnitario": {
+                  "codecId": "pg/numeric@1",
+                  "dataType": "pg/numeric",
+                  "default": {
+                    "kind": "literal",
+                    "value": "0.00"
+                  },
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 10,
+                    "scale": 2
+                  }
+                },
+                "presupuestoId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "repuestoId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "PresupuestoRepuesto_presupuestoId_idx_f5e95d09"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "presupuestoId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PresupuestoRepuesto"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Presupuestos"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "PresupuestoRepuesto_repuestoId_idx_3de6f292"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "repuestoId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PresupuestoRepuesto"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Repuestos"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "presupuestoId"
+                  ],
+                  "name": "PresupuestoRepuesto_presupuestoId_idx_f5e95d09",
+                  "prefix": "PresupuestoRepuesto_presupuestoId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "repuestoId"
+                  ],
+                  "name": "PresupuestoRepuesto_repuestoId_idx_3de6f292",
+                  "prefix": "PresupuestoRepuesto_repuestoId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "presupuestoId",
+                  "repuestoId"
+                ]
+              },
+              "uniques": []
+            },
+            "PresupuestoServicio": {
+              "columns": {
+                "cantidad": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nullable": false
+                },
+                "precioUnitario": {
+                  "codecId": "pg/numeric@1",
+                  "dataType": "pg/numeric",
+                  "default": {
+                    "kind": "literal",
+                    "value": "0.00"
+                  },
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 10,
+                    "scale": 2
+                  }
+                },
+                "presupuestoId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "servicioId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "PresupuestoServicio_presupuestoId_idx_f5e95d09"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "presupuestoId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PresupuestoServicio"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Presupuestos"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "PresupuestoServicio_servicioId_idx_70be2758"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "servicioId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PresupuestoServicio"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Servicios"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "presupuestoId"
+                  ],
+                  "name": "PresupuestoServicio_presupuestoId_idx_f5e95d09",
+                  "prefix": "PresupuestoServicio_presupuestoId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "servicioId"
+                  ],
+                  "name": "PresupuestoServicio_servicioId_idx_70be2758",
+                  "prefix": "PresupuestoServicio_servicioId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "presupuestoId",
+                  "servicioId"
+                ]
+              },
+              "uniques": []
             },
             "Presupuestos": {
               "checks": [
@@ -3457,6 +3269,19 @@
                   "dataType": "pg/int4",
                   "nullable": false
                 },
+                "total": {
+                  "codecId": "pg/numeric@1",
+                  "dataType": "pg/numeric",
+                  "default": {
+                    "kind": "literal",
+                    "value": "0.00"
+                  },
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 10,
+                    "scale": 2
+                  }
+                },
                 "version": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
@@ -3472,6 +3297,7 @@
                   "index": {
                     "name": "Presupuestos_ordenId_idx_b087098b"
                   },
+                  "onDelete": "restrict",
                   "source": {
                     "columns": [
                       "ordenId"
@@ -3508,8 +3334,8 @@
             "Repuestos": {
               "checks": [
                 {
-                  "expression": "\"estado\" IN ('DISPONIBLE', 'AGOTADO', 'EN_REPARACION', 'DESCATALOGADO')",
-                  "name": "Repuestos_estado_check_acb59f2a",
+                  "expression": "\"estado\" IN ('DISPONIBLE', 'AGOTADO', 'EN_REPOSICION', 'DESCATALOGADO')",
+                  "name": "Repuestos_estado_check_9c1e9b0a",
                   "prefix": "Repuestos_estado_check"
                 }
               ],
@@ -3573,7 +3399,7 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
-                "precioReferencial": {
+                "precioVenta": {
                   "codecId": "pg/numeric@1",
                   "dataType": "pg/numeric",
                   "default": {
@@ -3686,8 +3512,8 @@
             "Usuarios": {
               "checks": [
                 {
-                  "expression": "\"rol\" IN ('ADMINISTRADOR', 'TECNICO', 'RECEPCIONISTA', 'ALMACENISTA')",
-                  "name": "Usuarios_rol_check_e20a97be",
+                  "expression": "\"rol\" IN ('ADMINISTRADOR', 'TECNICO', 'RECEPCIONISTA', 'GERENTE')",
+                  "name": "Usuarios_rol_check_354854ec",
                   "prefix": "Usuarios_rol_check"
                 }
               ],
@@ -3704,6 +3530,11 @@
                     "kind": "literal",
                     "value": true
                   },
+                  "nullable": false
+                },
+                "apellido": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "avatar": {
@@ -3753,6 +3584,11 @@
                     "plane": "storage"
                   }
                 },
+                "telefono": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-date@1",
                   "dataType": "pg/timestamptz",
@@ -3793,20 +3629,15 @@
               "kind": "valueSet",
               "values": [
                 "RECIBIDO",
-                "EN_PROCESO",
-                "DIAGNOSTICADO",
+                "EN_DIAGNOSTICO",
                 "PENDIENTE_APROBACION",
+                "APROBADO",
                 "RECHAZADO",
                 "EN_REPARACION",
-                "LISTO_PARA_ENTREGA",
-                "ENTREGADO"
-              ]
-            },
-            "EstadoPago": {
-              "kind": "valueSet",
-              "values": [
-                "PENDIENTE",
-                "PAGADO"
+                "ESPERANDO_REPUESTO",
+                "LISTO",
+                "ENTREGADO",
+                "CANCELADO"
               ]
             },
             "EstadoPresupuesto": {
@@ -3832,16 +3663,8 @@
               "values": [
                 "DISPONIBLE",
                 "AGOTADO",
-                "EN_REPARACION",
+                "EN_REPOSICION",
                 "DESCATALOGADO"
-              ]
-            },
-            "MetodoPago": {
-              "kind": "valueSet",
-              "values": [
-                "EFECTIVO",
-                "TARJETA",
-                "QR"
               ]
             },
             "Prioridad": {
@@ -3858,27 +3681,7 @@
                 "ADMINISTRADOR",
                 "TECNICO",
                 "RECEPCIONISTA",
-                "ALMACENISTA"
-              ]
-            },
-            "TipoAjuste": {
-              "kind": "valueSet",
-              "values": [
-                "DESCUENTO",
-                "RECARGO",
-                "NORMAL"
-              ]
-            },
-            "TipoContacto": {
-              "kind": "valueSet",
-              "values": [
-                "TELEFONO",
-                "CORREO",
-                "WHATSAPP",
-                "FACEBOOK",
-                "INSTAGRAM",
-                "LINKEDIN",
-                "OTRO"
+                "GERENTE"
               ]
             },
             "TipoDispotivo": {
@@ -3887,7 +3690,6 @@
                 "COMPUTADORA",
                 "CELULAR",
                 "LAPTOP",
-                "NOTEBOOK",
                 "TABLET",
                 "SMARTWATCH",
                 "IMPRESORA",
@@ -3912,10 +3714,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "76a9d7dabfe8a6e50c6aedebbbfbbca570e2b0cab6c402e23dcec2aa877f6c9b"
+    "storageHash": "1bd9db97a5caa8f03cd976f45eadfb53d87a72bf3c9a452f4b5b1c114eadccbc"
   },
   "execution": {
-    "executionHash": "8846dc556b0816156c8e06f321e977d9a2c8cc60bc97905f66e82acad40b9457",
+    "executionHash": "86c0d579516dd94904206233c76a55608d6af658bf55b03d43219765306d3cf2",
     "mutations": {
       "defaults": [
         {
@@ -3927,7 +3729,7 @@
             }
           },
           "ref": {
-            "entry": "Contactos",
+            "entry": "Clientes",
             "field": "createdAt",
             "namespace": "public"
           }
@@ -3948,7 +3750,28 @@
             }
           },
           "ref": {
-            "entry": "Contactos",
+            "entry": "Clientes",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator",
+            "params": {
+              "precision": 3
+            }
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator",
+            "params": {
+              "precision": 3
+            }
+          },
+          "ref": {
+            "entry": "Configuracion",
             "field": "updatedAt",
             "namespace": "public"
           }

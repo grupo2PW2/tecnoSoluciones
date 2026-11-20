@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Titillium_Web } from "next/font/google";
+import { QueryProvider } from "@/src/providers/query-provider";
+
+import { Titillium_Web } from "next/font/google";
 import "./globals.css";
 
 const titillium = Titillium_Web({
@@ -24,7 +26,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${titillium.variable} h-full font-sans antialiased`}
     >
-      <body>{children}</body>
+      <body>
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   );
 }
