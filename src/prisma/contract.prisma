@@ -23,6 +23,7 @@ model Usuarios {
   recepcion              Orden[]            @relation("recepcionista")
   tecnico                Orden[]            @relation("tecnico")
   ordenesEntregadas      Orden[]            @relation("entregadoPor")
+
   movimientosRegistrados Movimientos[]
 }
 
@@ -243,8 +244,9 @@ model Movimientos {
   observaciones      String?
   registradoPorId    Int
 
-  registradoPor      Usuarios             @relation(fields: [registradoPorId], references: [id], onDelete: Restrict)
   detalleMovimientos DetalleMovimientos[]
+
+  registradoPor      Usuarios             @relation(fields: [registradoPorId], references: [id], onDelete: Restrict)
   ordenId            Int?
   orden              Orden?               @relation(fields: [ordenId], references: [id], onDelete: Restrict)
   updatedAt          temporal.UpdatedAt
