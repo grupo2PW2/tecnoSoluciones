@@ -20,12 +20,13 @@ export async function guardarRepuesto(formulario: FormData, repuestoId?: number)
     unidadesCaja: formulario.get("unidadesCaja"),
   };
 
-  const alta = repuestoId === undefined;
-  const id = alta ? null : idSchema.safeParse(repuestoId);
+  const id = repuestoId === undefined ? null : idSchema.safeParse(repuestoId);
   if (id && !id.success) return { error: "El repuesto seleccionado no es válido." };
 
-  const validado = alta ? altaRepuestoSchema.safeParse(ficha)
-    : edicionRepuestoSchema.safeParse({ ...ficha, modoEstado: formulario.get("modoEstado") });
+  const edicion = id?.success
+    ? edicionRepuestoSchema.safeParse({ ...ficha, modoEstado: formulario.get("modoEstado") })
+    : null;
+  const validado = edicion ?? altaRepuestoSchema.safeParse(ficha);
   if (!validado.success) return { error: validado.error.issues[0].message };
 
   let imagenNueva: string | undefined;
@@ -35,8 +36,8 @@ export async function guardarRepuesto(formulario: FormData, repuestoId?: number)
     if ("error" in imagen) return imagen;
     imagenNueva = imagen.nueva;
 
-    const resultado = id?.success && "modoEstado" in validado.data
-      ? await editarRepuesto(id.data, validado.data, imagen.referencia)
+    const resultado = id?.success && edicion?.success
+      ? await editarRepuesto(id.data, edicion.data, imagen.referencia)
       : await crearRepuesto(validado.data, imagenNueva);
     if ("error" in resultado) {
       if (imagenNueva) await eliminarImagen(imagenNueva);

@@ -117,7 +117,7 @@ function FormularioIngreso({ alCancelar, alGuardar, guardando, alCambiarGuardado
           <div className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
             <SelectorIngreso id="orden-cliente" etiqueta="Cliente" ejemplo="Nombre, apellido o teléfono"
               seleccion={cliente} alSeleccionar={seleccionarCliente} disabled={guardando} />
-            <DialogoAlta titulo="Nuevo cliente" descripcion="El cliente quedará seleccionado en la orden."
+            <DialogoAlta<OpcionIngreso> titulo="Nuevo cliente" descripcion="El cliente quedará seleccionado en la orden."
               disabled={guardando} alGuardar={(opcion) => {
                 seleccionarCliente(opcion);
                 notificarGuardado("Cliente registrado");
@@ -126,7 +126,7 @@ function FormularioIngreso({ alCancelar, alGuardar, guardando, alCambiarGuardado
               }}
               guardar={async (formulario) => {
                 const resultado = await crearCliente(formulario);
-                if (!resultado.cliente) return { error: resultado.error ?? "No se pudo guardar el cliente." };
+                if ("error" in resultado) return { error: resultado.error ?? "No se pudo guardar el cliente." };
 
                 const registro = resultado.cliente;
                 return { opcion: {
@@ -142,7 +142,7 @@ function FormularioIngreso({ alCancelar, alGuardar, guardando, alCambiarGuardado
             <div className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
               <SelectorIngreso key={cliente.id} id="orden-equipo" etiqueta="Equipo" ejemplo="Marca, modelo o número de serie"
                 clienteId={cliente.id} seleccion={equipo} alSeleccionar={setEquipo} disabled={guardando} />
-              <DialogoAlta titulo="Nuevo equipo" descripcion={"El equipo se registrará para " + cliente.etiqueta + "."}
+              <DialogoAlta<OpcionIngreso> titulo="Nuevo equipo" descripcion={"El equipo se registrará para " + cliente.etiqueta + "."}
                 disabled={guardando} alGuardar={(opcion) => {
                   setEquipo(opcion);
                   notificarGuardado("Equipo registrado");
@@ -150,7 +150,7 @@ function FormularioIngreso({ alCancelar, alGuardar, guardando, alCambiarGuardado
                 }}
                 guardar={async (formulario) => {
                   const resultado = await crearDispositivo(cliente.id, formulario);
-                  if (!resultado.dispositivo) return { error: resultado.error ?? "No se pudo guardar el equipo." };
+                  if ("error" in resultado) return { error: resultado.error ?? "No se pudo guardar el equipo." };
 
                   const registro = resultado.dispositivo;
                   return { opcion: {

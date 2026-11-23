@@ -21,7 +21,9 @@ export function FormularioUsuario({ usuario }: { usuario?: UsuarioListado }) {
       etiquetaGuardar="Guardar usuario" principal={!usuario}
       guardar={async (formulario) => {
         const resultado = usuario ? await actualizarUsuario(usuario.id, formulario) : await registrarUsuario(formulario);
-        return resultado.usuario ? { opcion: resultado.usuario } : { error: resultado.error ?? "No se pudo guardar el usuario." };
+        return "error" in resultado
+          ? { error: resultado.error ?? "No se pudo guardar el usuario." }
+          : { opcion: resultado.usuario };
       }}
       alGuardar={() => notificarGuardado(usuario ? "Usuario actualizado" : "Usuario registrado")}>
       <div className="grid gap-3 sm:grid-cols-2">

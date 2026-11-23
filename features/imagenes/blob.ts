@@ -11,7 +11,7 @@ async function coincideFirma(archivo: File, tipo: TipoImagen) {
   return coincide([0x52, 0x49, 0x46, 0x46]) && coincide([0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38], 8);
 }
 
-export async function subirImagen(carpeta: string, archivo: File) {
+export async function subirImagen(carpeta: string, archivo: File): Promise<{ ruta: string } | { error: string }> {
   if (archivo.size > limiteImagen) return { error: "La imagen debe pesar como máximo 3 MB." } as const;
   const tipo = archivo.type;
   if (!esTipoImagen(tipo) || !(await coincideFirma(archivo, tipo))) {
@@ -31,7 +31,9 @@ export async function subirImagen(carpeta: string, archivo: File) {
   }
 }
 
-export async function prepararImagen(carpeta: string, formulario: FormData) {
+export async function prepararImagen(
+  carpeta: string, formulario: FormData,
+): Promise<{ referencia: string | null | undefined; nueva: string | undefined } | { error: string }> {
   const archivo = formulario.get("imagen");
   if (archivo instanceof File && (archivo.name || archivo.size > 0)) {
     const subida = await subirImagen(carpeta, archivo);

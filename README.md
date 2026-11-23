@@ -44,6 +44,14 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 Si falta la variable o su valor es inválido, el ticket usa la dirección desde la que el personal abrió la aplicación. Vuelve a abrir y reimprimir un ticket si necesitas actualizar su QR.
 
+## Pruebas de Órdenes
+
+Ejecuta las pruebas unitarias con `npm run test:unit`.
+
+Para las pruebas de integración, usa una instancia PostgreSQL de pruebas con `psql` disponible y un usuario que pueda crear bases. Define `TEST_DATABASE_URL` en `.env.test.local` o en la terminal. Por ejemplo, `postgresql://usuario:clave@localhost:5432/postgres`.
+
+`npm run test:integration` crea una base temporal, aplica las migraciones existentes, ejecuta las pruebas y elimina la base al terminar. El proceso de pruebas usa esa base para las consultas y las escrituras.
+
 ## Instalar para seeders
 npm install -D tsx
 

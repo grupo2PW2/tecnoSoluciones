@@ -13,6 +13,11 @@ export interface RepuestoInventario {
 
 export const maxUnidadesInventario = 2147483647;
 
+export function alertaStockMinimo({ stock, stockMinimo }: Pick<RepuestoInventario, "stock" | "stockMinimo">) {
+  if (stockMinimo <= 0 || stock > stockMinimo) return null;
+  return stock < stockMinimo ? "bajo-minimo" : "en-minimo";
+}
+
 export function calcularUnidadesMovimiento(cajas: number, unidades: number, unidadesCaja: number) {
   if (!Number.isInteger(cajas) || cajas < 0 || !Number.isInteger(unidades) || unidades < 0 ||
     (cajas > 0 && unidadesCaja <= 0)) return null;

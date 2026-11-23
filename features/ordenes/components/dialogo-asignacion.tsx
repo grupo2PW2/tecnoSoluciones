@@ -28,7 +28,7 @@ export function DialogoAsignacion({ ordenId, codigo, actualizarDetalle }: { orde
     setError("");
     try {
       const resultado = await asignarTecnico(ordenId, tecnicoId);
-      if (resultado.asignada) {
+      if (!("error" in resultado)) {
         notificarGuardado("Técnico asignado", "Orden " + codigo);
         setAbierto(false);
         if (actualizarDetalle) router.refresh();

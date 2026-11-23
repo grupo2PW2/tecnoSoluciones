@@ -24,7 +24,9 @@ export function FormularioAcceso({ usuario, esPropio }: { usuario: UsuarioListad
       etiquetaGuardar="Guardar acceso"
       guardar={async (formulario) => {
         const resultado = await actualizarAccesoUsuario(usuario.id, formulario, { rol: usuario.rol, activo: usuario.activo });
-        return resultado.usuario ? { opcion: resultado.usuario } : { error: resultado.error ?? "No se pudo guardar el acceso." };
+        return "error" in resultado
+          ? { error: resultado.error ?? "No se pudo guardar el acceso." }
+          : { opcion: resultado.usuario };
       }}
       alGuardar={() => notificarGuardado("Acceso guardado", usuario.username)}>
       {rolFijo ? <div>

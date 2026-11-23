@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { connection, type NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { puedeRegistrarIngreso } from "@/features/ordenes/modelo";
 
@@ -7,6 +7,8 @@ import { normalizarFiltros } from "@/features/clientes/filters";
 import { obtenerClientesPaginados } from "@/features/clientes/queries";
 
 export async function GET(request: NextRequest) {
+  await connection();
+
   try {
     const usuario = await getCurrentUser();
     if (!puedeRegistrarIngreso(usuario?.rol)) {

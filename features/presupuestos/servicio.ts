@@ -13,15 +13,15 @@ import type { OpcionServicio } from "./modelo";
 import type { SolicitudPresupuesto } from "./schemas";
 import { crearServicioCatalogo, validarAltaServicio, errorAltaServicio } from "@/features/servicios/alta";
 
-export function listarServiciosCotizables(): Promise<OpcionServicio[]> {
-  return db.orm.public.Servicios.where({ activo: true })
+export async function listarServiciosCotizables(): Promise<OpcionServicio[]> {
+  const servicios = await db.orm.public.Servicios.where({ activo: true })
     .where((servicio) => servicio.nombre.neq(nombreDiagnosticoGeneral))
     .select("id", "nombre", "precioReferencial")
-    .orderBy((servicio) => servicio.nombre.asc())
-    .all()
-    .then((servicios) => servicios.map((servicio) => ({
-      id: servicio.id, nombre: servicio.nombre, precioUnitario: servicio.precioReferencial,
-    })));
+    .orderBy((servicio) => servicio.nombre.asc()).all();
+
+  return servicios.map((servicio) => ({
+    id: servicio.id, nombre: servicio.nombre, precioUnitario: servicio.precioReferencial,
+  }));
 }
 
 async function validarCotizacion(

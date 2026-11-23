@@ -21,7 +21,9 @@ export function DialogoEquipo({ clienteId, equipo, principal }: { clienteId: num
         const resultado = equipo
           ? await actualizarDispositivo(equipo.id, clienteId, formulario)
           : await crearDispositivo(clienteId, formulario);
-        return resultado.dispositivo ? { opcion: resultado.dispositivo } : { error: resultado.error ?? "No se pudo guardar el equipo." };
+        return "error" in resultado
+          ? { error: resultado.error ?? "No se pudo guardar el equipo." }
+          : { opcion: resultado.dispositivo };
       }}
       alGuardar={() => {
         notificarGuardado(equipo ? "Equipo actualizado" : "Equipo registrado");

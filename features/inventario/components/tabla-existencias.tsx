@@ -8,7 +8,7 @@ import { mostrarBs } from "@/features/presupuestos/importes";
 import { estadoRepuesto, normalizarBusquedaRepuesto } from "@/features/repuestos/modelo";
 import { IndicadorEstadoRepuesto } from "@/features/repuestos/components/indicador-estado-repuesto";
 import { mostrarCajasYUnidades, mostrarUnidades } from "@/lib/existencias";
-import type { RepuestoInventario } from "../modelo";
+import { alertaStockMinimo, type RepuestoInventario } from "../modelo";
 import { EditarStockMinimo } from "./editar-stock-minimo";
 
 export function TablaExistencias({ repuestos }: { repuestos: RepuestoInventario[] }) {
@@ -42,8 +42,8 @@ export function TablaExistencias({ repuestos }: { repuestos: RepuestoInventario[
               {resultados.map((repuesto) => {
                 const stock = mostrarCajasYUnidades(repuesto);
                 const unidades = mostrarUnidades(repuesto.stock);
-                const alerta = repuesto.stockMinimo > 0 && repuesto.stock <= repuesto.stockMinimo;
-                const bajoMinimo = repuesto.stock < repuesto.stockMinimo;
+                const alerta = alertaStockMinimo(repuesto);
+                const bajoMinimo = alerta === "bajo-minimo";
                 return (
                   <TableRow key={repuesto.id}>
                     <TableCell className="whitespace-normal">

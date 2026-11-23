@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
     "contract:emit": "prisma contract emit",
     "db:seed": "tsx src/prisma/seed.ts"
   },
@@ -43,6 +45,7 @@
     "prisma": "^8.0.0-rc.32",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "4.1"
   }
 }

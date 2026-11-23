@@ -166,7 +166,7 @@ function Formulario({ ordenId, presupuesto, catalogo, catalogoRepuestos, hoy, se
               disabled={guardando} alGuardar={agregarNuevoServicio}
               guardar={async (formulario) => {
                 const resultado = await registrarServicioParaPresupuesto(ordenId, presupuesto.id, formulario);
-                if (!resultado.opcion) {
+                if ("error" in resultado) {
                   alActualizarCatalogo();
                   return { error: resultado.error ?? "No se pudo registrar el servicio." };
                 }

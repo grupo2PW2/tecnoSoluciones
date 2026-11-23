@@ -59,7 +59,7 @@ export function BandejaTecnica({ tecnicoId, vistaInicial }: { tecnicoId: number;
     try {
       const resultado = await tomarOrden(seleccion.id);
       void queryClient.invalidateQueries({ queryKey: ["bandeja-tecnica", tecnicoId] });
-      if (!resultado.asignada) {
+      if ("error" in resultado) {
         setErrorToma(resultado.error ?? "No se pudo tomar la orden.");
         return;
       }
