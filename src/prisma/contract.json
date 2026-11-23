@@ -269,6 +269,19 @@
               }
             ]
           },
+          "TipoIngreso": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "DIAGNOSTICO",
+                "value": "DIAGNOSTICO"
+              },
+              {
+                "name": "SERVICIO_DIRECTO",
+                "value": "SERVICIO_DIRECTO"
+              }
+            ]
+          },
           "TipoMovimiento": {
             "codecId": "pg/text@1",
             "members": [
@@ -287,14 +300,6 @@
               {
                 "name": "SALIDA_VENTA",
                 "value": "SALIDA_VENTA"
-              },
-              {
-                "name": "AJUSTE_POSITIVO",
-                "value": "AJUSTE_POSITIVO"
-              },
-              {
-                "name": "AJUSTE_NEGATIVO",
-                "value": "AJUSTE_NEGATIVO"
               }
             ]
           },
@@ -473,6 +478,17 @@
                   "kind": "scalar"
                 }
               },
+              "costoTotal": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 20,
+                    "scale": 2
+                  }
+                }
+              },
               "costoUnitario": {
                 "nullable": false,
                 "type": {
@@ -489,6 +505,17 @@
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
+                }
+              },
+              "margenAplicado": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 14,
+                    "scale": 2
+                  }
                 }
               },
               "movimientoId": {
@@ -556,11 +583,17 @@
                 "cantidad": {
                   "column": "cantidad"
                 },
+                "costoTotal": {
+                  "column": "costoTotal"
+                },
                 "costoUnitario": {
                   "column": "costoUnitario"
                 },
                 "id": {
                   "column": "id"
+                },
+                "margenAplicado": {
+                  "column": "margenAplicado"
                 },
                 "movimientoId": {
                   "column": "movimientoId"
@@ -816,6 +849,13 @@
                   "kind": "scalar"
                 }
               },
+              "solicitudId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "tipo": {
                 "nullable": false,
                 "type": {
@@ -905,6 +945,9 @@
                 },
                 "registradoPorId": {
                   "column": "registradoPorId"
+                },
+                "solicitudId": {
+                  "column": "solicitudId"
                 },
                 "tipo": {
                   "column": "tipo"
@@ -1048,6 +1091,19 @@
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
+                }
+              },
+              "tipoIngreso": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "TipoIngreso",
+                  "namespaceId": "public",
+                  "plane": "domain"
                 }
               }
             },
@@ -1196,6 +1252,9 @@
                 },
                 "tecnicoId": {
                   "column": "tecnicoId"
+                },
+                "tipoIngreso": {
+                  "column": "tipoIngreso"
                 }
               },
               "namespaceId": "public",
@@ -2289,6 +2348,15 @@
                   "dataType": "pg/int4",
                   "nullable": false
                 },
+                "costoTotal": {
+                  "codecId": "pg/numeric@1",
+                  "dataType": "pg/numeric",
+                  "nullable": true,
+                  "typeParams": {
+                    "precision": 20,
+                    "scale": 2
+                  }
+                },
                 "costoUnitario": {
                   "codecId": "pg/numeric@1",
                   "dataType": "pg/numeric",
@@ -2310,6 +2378,15 @@
                     "kind": "function"
                   },
                   "nullable": false
+                },
+                "margenAplicado": {
+                  "codecId": "pg/numeric@1",
+                  "dataType": "pg/numeric",
+                  "nullable": true,
+                  "typeParams": {
+                    "precision": 14,
+                    "scale": 2
+                  }
                 },
                 "movimientoId": {
                   "codecId": "pg/int4@1",
@@ -2590,8 +2667,8 @@
             "Movimientos": {
               "checks": [
                 {
-                  "expression": "\"tipo\" IN ('ENTRADA', 'SALIDA', 'SALIDA_REPARACION', 'SALIDA_VENTA', 'AJUSTE_POSITIVO', 'AJUSTE_NEGATIVO')",
-                  "name": "Movimientos_tipo_check_a6d87e5a",
+                  "expression": "\"tipo\" IN ('ENTRADA', 'SALIDA', 'SALIDA_REPARACION', 'SALIDA_VENTA')",
+                  "name": "Movimientos_tipo_check_3552c0af",
                   "prefix": "Movimientos_tipo_check"
                 }
               ],
@@ -2631,6 +2708,11 @@
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": false
+                },
+                "solicitudId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
                 },
                 "tipo": {
                   "codecId": "pg/text@1",
@@ -2721,7 +2803,13 @@
                   "id"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "solicitudId"
+                  ]
+                }
+              ]
             },
             "Orden": {
               "checks": [
@@ -2729,6 +2817,11 @@
                   "expression": "\"estado\" IN ('RECIBIDO', 'EN_DIAGNOSTICO', 'PENDIENTE_APROBACION', 'APROBADO', 'RECHAZADO', 'RECHAZADO_ENTREGADO', 'EN_REPARACION', 'LISTO', 'ENTREGADO', 'CANCELADO')",
                   "name": "Orden_estado_check_e7ba5515",
                   "prefix": "Orden_estado_check"
+                },
+                {
+                  "expression": "\"tipoIngreso\" IN ('DIAGNOSTICO', 'SERVICIO_DIRECTO')",
+                  "name": "Orden_tipoIngreso_check_0e458bf7",
+                  "prefix": "Orden_tipoIngreso_check"
                 }
               ],
               "columns": {
@@ -2842,6 +2935,17 @@
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": true
+                },
+                "tipoIngreso": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "TipoIngreso",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 }
               },
               "foreignKeys": [
@@ -3864,15 +3968,20 @@
                 "OTRO"
               ]
             },
+            "TipoIngreso": {
+              "kind": "valueSet",
+              "values": [
+                "DIAGNOSTICO",
+                "SERVICIO_DIRECTO"
+              ]
+            },
             "TipoMovimiento": {
               "kind": "valueSet",
               "values": [
                 "ENTRADA",
                 "SALIDA",
                 "SALIDA_REPARACION",
-                "SALIDA_VENTA",
-                "AJUSTE_POSITIVO",
-                "AJUSTE_NEGATIVO"
+                "SALIDA_VENTA"
               ]
             },
             "TipoPresupuesto": {
@@ -3888,7 +3997,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "711be29f2279792d3091c4393bbeaffbe787bab6bfd8b5a9e2dac6738979c7e6"
+    "storageHash": "0d13bb275ba30309d7873f1cbced485e45aec35174cb0eec6db841254416f966"
   },
   "execution": {
     "executionHash": "86c0d579516dd94904206233c76a55608d6af658bf55b03d43219765306d3cf2",

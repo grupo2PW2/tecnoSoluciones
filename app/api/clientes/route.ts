@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUser } from "@/lib/auth";
+import { puedeRegistrarIngreso } from "@/features/ordenes/modelo";
 
 import { normalizarFiltros } from "@/features/clientes/filters";
 
@@ -6,7 +8,10 @@ import { obtenerClientesPaginados } from "@/features/clientes/queries";
 
 export async function GET(request: NextRequest) {
   try {
-    // TODO: verificar sesión y permisos de lectura.
+    const usuario = await getCurrentUser();
+    if (!puedeRegistrarIngreso(usuario?.rol)) {
+      return NextResponse.json({ message: "Tu usuario no tiene permiso para consultar clientes." }, { status: usuario ? 403 : 401 });
+    }
 
     const { searchParams } = request.nextUrl;
 

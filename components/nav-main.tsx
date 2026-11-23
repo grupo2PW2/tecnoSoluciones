@@ -1,106 +1,32 @@
 "use client";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
-import { ChevronRightIcon, LayoutDashboardIcon } from "lucide-react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import { IconoRuta } from "@/features/panel/components/icono-ruta";
+import { rutaActiva, titulosPanel, type GrupoPanel } from "@/features/panel/navegacion";
 
-type NavItem = {
-  title: string;
-  url: string;
-  icon?: ReactNode;
-  items?: {
-    title: string;
-    url: string;
-  }[];
-};
-
-function isActivePath(pathname: string, url: string) {
-  if (url === "#") return false;
-
-  return pathname === url || pathname.startsWith(`${url}/`);
-}
-
-export function NavMain({ items }: { items: NavItem[] }) {
+export function NavMain({ grupos }: { grupos: GrupoPanel[] }) {
   const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
+  const secciones: GrupoPanel[] = [{ titulo: "Panel", rutas: ["/dashboard"] }, ...grupos];
 
-  return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
-
+  return <nav aria-label="Menú principal" className="flex flex-col">
+    {secciones.map(({ titulo, rutas }) => <SidebarGroup key={titulo}>
+      <SidebarGroupLabel>{titulo}</SidebarGroupLabel>
       <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            isActive={pathname === "/dashboard"}
-            tooltip="Dashboard"
-          >
-            <LayoutDashboardIcon />
-            <Link href="/dashboard">
-              <span>Dashboard</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-
-        {items.map((item) => {
-          const hasActiveChild =
-            item.items?.some((subItem) =>
-              isActivePath(pathname, subItem.url),
-            ) ?? false;
-
-          const isActive = isActivePath(pathname, item.url) || hasActiveChild;
-
-          return (
-            <Collapsible
-              key={`${item.title}-${pathname}`}
-              defaultOpen={isActive}
-              className="group/collapsible"
-              render={<SidebarMenuItem />}
-            >
-              <CollapsibleTrigger
-                render={
-                  <SidebarMenuButton tooltip={item.title} isActive={isActive} />
-                }
-              >
-                {item.icon}
-                <span>{item.title}</span>
-                <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90" />
-              </CollapsibleTrigger>
-
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton
-                        isActive={isActivePath(pathname, subItem.url)}
-                        render={
-                          <Link href={subItem.url}>
-                            <span>{subItem.title}</span>
-                          </Link>
-                        }
-                      />
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </Collapsible>
-          );
+        {rutas.map((ruta) => {
+          const activa = rutaActiva(pathname, ruta);
+          return <SidebarMenuItem key={ruta}>
+            <SidebarMenuButton isActive={activa} tooltip={titulosPanel[ruta]}
+              render={<Link href={ruta} aria-current={activa ? (pathname === ruta ? "page" : "location") : undefined}
+                onNavigate={() => setOpenMobile(false)} />}>
+              <IconoRuta ruta={ruta} />
+              <span>{titulosPanel[ruta]}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>;
         })}
       </SidebarMenu>
-    </SidebarGroup>
-  );
+    </SidebarGroup>)}
+  </nav>;
 }

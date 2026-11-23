@@ -82,11 +82,17 @@ enum EstadoOrden {
   CANCELADO // EL TRABAJO FUE CANCELADO POR LA EMPRESA
 }
 
+enum TipoIngreso {
+  DIAGNOSTICO
+  SERVICIO_DIRECTO
+}
+
 model Orden {
   id                   Int                   @id @default(autoincrement())
   codigo               String                @unique
   codigoCliente        String                @unique
   fechaIngreso         DateTime              @default(now()) @onCreate(now())
+  tipoIngreso          TipoIngreso?
   problemasReportados  String
   condicionDispositivo String?
   accesoriosRecibidos  String?
@@ -233,8 +239,6 @@ enum TipoMovimiento {
   SALIDA
   SALIDA_REPARACION
   SALIDA_VENTA
-  AJUSTE_POSITIVO
-  AJUSTE_NEGATIVO
 }
 
 model Movimientos {
@@ -242,6 +246,7 @@ model Movimientos {
   tipo               TipoMovimiento       @default(SALIDA)
   fecha              DateTime             @default(now()) @onCreate(now())
   observaciones      String?
+  solicitudId        String?              @unique
   registradoPorId    Int
 
   detalleMovimientos DetalleMovimientos[]
@@ -256,7 +261,9 @@ model DetalleMovimientos {
   id             Int                   @id @default(autoincrement())
   cantidad       Int
   costoUnitario  NumericString(10, 2)  @default(0.00)
+  costoTotal     NumericString(20, 2)?
   precioUnitario NumericString(10, 2)? @default(0.00)
+  margenAplicado NumericString(14, 2)?
 
   movimientoId   Int
   movimiento     Movimientos           @relation(fields: [movimientoId], references: [id], onDelete: Restrict)

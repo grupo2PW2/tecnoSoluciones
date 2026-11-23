@@ -7,8 +7,6 @@ import { db } from "@/src/prisma/db";
 import { sessionCookieName, verifySession } from "@/lib/session";
 
 export async function getCurrentUser() {
-  "use cache: private";
-
   const cookieStore = await cookies();
   const session = await verifySession(cookieStore.get(sessionCookieName)?.value);
 

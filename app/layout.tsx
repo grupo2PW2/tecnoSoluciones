@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "@/components/ui/toast";
 import { QueryProvider } from "@/src/providers/query-provider";
 
 import { Titillium_Web } from "next/font/google";
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${titillium.variable} h-full font-sans antialiased`}
     >
       <body>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider><Toaster>{children}</Toaster></QueryProvider>
       </body>
     </html>
   );

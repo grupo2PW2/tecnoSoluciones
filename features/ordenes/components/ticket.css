@@ -1,0 +1,40 @@
+
+.ticket-para-imprimir {
+  display: none;
+}
+
+@media print {
+  html:has(.ticket-para-imprimir),
+  body:has(> .ticket-para-imprimir) {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body:has(> .ticket-para-imprimir) > :not(.ticket-para-imprimir) {
+    display: none !important;
+  }
+
+  body > .ticket-para-imprimir {
+    display: block;
+    color: #000;
+    background: #fff;
+    font: 11pt/1.45 Arial, sans-serif;
+  }
+
+  .ticket-para-imprimir .ticket-ingreso-papel {
+    max-width: 150mm;
+    margin: 8mm auto 0;
+    padding: 5mm;
+    border: 1px solid #777;
+    break-inside: avoid;
+  }
+
+  .ticket-para-imprimir section {
+    background: #fff;
+    border-color: #777;
+  }
+
+  .ticket-para-imprimir a {
+    color: inherit;
+  }
+}

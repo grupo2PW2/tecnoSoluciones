@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 interface Props {
   clientes: ClienteListado[];
@@ -40,7 +40,7 @@ export function ClientesTable({ clientes }: Props) {
           ) : (
             clientes.map((cliente) => (
               <TableRow key={cliente.id}>
-                <TableCell className="font-medium">
+                <TableCell className="whitespace-normal font-semibold">
                   {cliente.nombre} {cliente.apellido}
                 </TableCell>
 
@@ -49,13 +49,9 @@ export function ClientesTable({ clientes }: Props) {
                 <TableCell>{cliente.direccion ?? "Sin dirección"}</TableCell>
 
                 <TableCell className="text-right">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    render={<Link href={`/clientes/${cliente.id}`} />}
-                  >
-                    Ver detalle
-                  </Button>
+                  <Link href={`/clientes/${cliente.id}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+                    Ver ficha
+                  </Link>
                 </TableCell>
               </TableRow>
             ))

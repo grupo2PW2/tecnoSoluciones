@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'711be29f2279792d3091c4393bbeaffbe787bab6bfd8b5a9e2dac6738979c7e6'>;
+  StorageHashBase<'0d13bb275ba30309d7873f1cbced485e45aec35174cb0eec6db841254416f966'>;
 export type ExecutionHash =
   ExecutionHashBase<'86c0d579516dd94904206233c76a55608d6af658bf55b03d43219765306d3cf2'>;
 export type ProfileHash =
@@ -302,20 +302,8 @@ type FieldTypeOverrides = {
       };
       readonly Movimientos: {
         readonly tipo: {
-          readonly output:
-            | 'ENTRADA'
-            | 'SALIDA'
-            | 'SALIDA_REPARACION'
-            | 'SALIDA_VENTA'
-            | 'AJUSTE_POSITIVO'
-            | 'AJUSTE_NEGATIVO';
-          readonly input:
-            | 'ENTRADA'
-            | 'SALIDA'
-            | 'SALIDA_REPARACION'
-            | 'SALIDA_VENTA'
-            | 'AJUSTE_POSITIVO'
-            | 'AJUSTE_NEGATIVO';
+          readonly output: 'ENTRADA' | 'SALIDA' | 'SALIDA_REPARACION' | 'SALIDA_VENTA';
+          readonly input: 'ENTRADA' | 'SALIDA' | 'SALIDA_REPARACION' | 'SALIDA_VENTA';
         };
       };
       readonly Orden: {
@@ -342,6 +330,10 @@ type FieldTypeOverrides = {
             | 'LISTO'
             | 'ENTREGADO'
             | 'CANCELADO';
+        };
+        readonly tipoIngreso: {
+          readonly output: 'DIAGNOSTICO' | 'SERVICIO_DIRECTO';
+          readonly input: 'DIAGNOSTICO' | 'SERVICIO_DIRECTO';
         };
       };
       readonly Presupuestos: {
@@ -439,20 +431,8 @@ type ColumnTypeOverrides = {
     };
     readonly Movimientos: {
       readonly tipo: {
-        readonly output:
-          | 'ENTRADA'
-          | 'SALIDA'
-          | 'SALIDA_REPARACION'
-          | 'SALIDA_VENTA'
-          | 'AJUSTE_POSITIVO'
-          | 'AJUSTE_NEGATIVO';
-        readonly input:
-          | 'ENTRADA'
-          | 'SALIDA'
-          | 'SALIDA_REPARACION'
-          | 'SALIDA_VENTA'
-          | 'AJUSTE_POSITIVO'
-          | 'AJUSTE_NEGATIVO';
+        readonly output: 'ENTRADA' | 'SALIDA' | 'SALIDA_REPARACION' | 'SALIDA_VENTA';
+        readonly input: 'ENTRADA' | 'SALIDA' | 'SALIDA_REPARACION' | 'SALIDA_VENTA';
       };
     };
     readonly Orden: {
@@ -479,6 +459,10 @@ type ColumnTypeOverrides = {
           | 'LISTO'
           | 'ENTREGADO'
           | 'CANCELADO';
+      };
+      readonly tipoIngreso: {
+        readonly output: 'DIAGNOSTICO' | 'SERVICIO_DIRECTO';
+        readonly input: 'DIAGNOSTICO' | 'SERVICIO_DIRECTO';
       };
     };
     readonly Presupuestos: {
@@ -558,8 +542,10 @@ export namespace Models {
   };
   export type public_DetalleMovimientos = {
     cantidad: FieldOutputTypes['public']['DetalleMovimientos']['cantidad'];
+    costoTotal: FieldOutputTypes['public']['DetalleMovimientos']['costoTotal'];
     costoUnitario: FieldOutputTypes['public']['DetalleMovimientos']['costoUnitario'];
     id: FieldOutputTypes['public']['DetalleMovimientos']['id'];
+    margenAplicado: FieldOutputTypes['public']['DetalleMovimientos']['margenAplicado'];
     movimientoId: FieldOutputTypes['public']['DetalleMovimientos']['movimientoId'];
     precioUnitario: FieldOutputTypes['public']['DetalleMovimientos']['precioUnitario'];
     repuestoId: FieldOutputTypes['public']['DetalleMovimientos']['repuestoId'];
@@ -594,6 +580,7 @@ export namespace Models {
     observaciones: FieldOutputTypes['public']['Movimientos']['observaciones'];
     ordenId: FieldOutputTypes['public']['Movimientos']['ordenId'];
     registradoPorId: FieldOutputTypes['public']['Movimientos']['registradoPorId'];
+    solicitudId: FieldOutputTypes['public']['Movimientos']['solicitudId'];
     tipo: FieldOutputTypes['public']['Movimientos']['tipo'];
     updatedAt: FieldOutputTypes['public']['Movimientos']['updatedAt'];
     detalleMovimientos: public_DetalleMovimientos[];
@@ -618,6 +605,7 @@ export namespace Models {
     problemasReportados: FieldOutputTypes['public']['Orden']['problemasReportados'];
     recepcionistaId: FieldOutputTypes['public']['Orden']['recepcionistaId'];
     tecnicoId: FieldOutputTypes['public']['Orden']['tecnicoId'];
+    tipoIngreso: FieldOutputTypes['public']['Orden']['tipoIngreso'];
     dispositivo: public_Dispositivos;
     entregadoPor: public_Usuarios | null;
     movimientos: public_Movimientos[];
@@ -861,6 +849,13 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly costoTotal: {
+                  readonly dataType: 'pg/numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: true;
+                  readonly typeParams: { readonly precision: 20; readonly scale: 2 };
+                  readonly many: false;
+                };
                 readonly costoUnitario: {
                   readonly dataType: 'pg/numeric';
                   readonly codecId: 'pg/numeric@1';
@@ -880,6 +875,13 @@ type ContractBase = Omit<
                     readonly kind: 'function';
                     readonly expression: 'autoincrement()';
                   };
+                  readonly many: false;
+                };
+                readonly margenAplicado: {
+                  readonly dataType: 'pg/numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: true;
+                  readonly typeParams: { readonly precision: 14; readonly scale: 2 };
                   readonly many: false;
                 };
                 readonly movimientoId: {
@@ -1129,6 +1131,12 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly solicitudId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly tipo: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -1148,7 +1156,7 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
+              uniques: readonly [{ readonly columns: readonly ['solicitudId'] }];
               indexes: readonly [
                 {
                   readonly name: 'Movimientos_ordenId_idx_b087098b';
@@ -1298,6 +1306,12 @@ type ContractBase = Omit<
                 readonly tecnicoId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly tipoIngreso: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                   readonly many: false;
                 };
@@ -2061,16 +2075,13 @@ type ContractBase = Omit<
                 'OTRO',
               ];
             };
+            readonly TipoIngreso: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['DIAGNOSTICO', 'SERVICIO_DIRECTO'];
+            };
             readonly TipoMovimiento: {
               readonly kind: 'valueSet';
-              readonly values: readonly [
-                'ENTRADA',
-                'SALIDA',
-                'SALIDA_REPARACION',
-                'SALIDA_VENTA',
-                'AJUSTE_POSITIVO',
-                'AJUSTE_NEGATIVO',
-              ];
+              readonly values: readonly ['ENTRADA', 'SALIDA', 'SALIDA_REPARACION', 'SALIDA_VENTA'];
             };
             readonly TipoPresupuesto: {
               readonly kind: 'valueSet';
@@ -2235,6 +2246,14 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly costoTotal: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly typeParams: { readonly precision: 20; readonly scale: 2 };
+                };
+              };
               readonly costoUnitario: {
                 readonly nullable: false;
                 readonly type: {
@@ -2246,6 +2265,14 @@ type ContractBase = Omit<
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly margenAplicado: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly typeParams: { readonly precision: 14; readonly scale: 2 };
+                };
               };
               readonly movimientoId: {
                 readonly nullable: false;
@@ -2295,8 +2322,10 @@ type ContractBase = Omit<
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly cantidad: { readonly column: 'cantidad' };
+                readonly costoTotal: { readonly column: 'costoTotal' };
                 readonly costoUnitario: { readonly column: 'costoUnitario' };
                 readonly id: { readonly column: 'id' };
+                readonly margenAplicado: { readonly column: 'margenAplicado' };
                 readonly movimientoId: { readonly column: 'movimientoId' };
                 readonly precioUnitario: { readonly column: 'precioUnitario' };
                 readonly repuestoId: { readonly column: 'repuestoId' };
@@ -2452,6 +2481,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly solicitudId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly tipo: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2511,6 +2544,7 @@ type ContractBase = Omit<
                 readonly observaciones: { readonly column: 'observaciones' };
                 readonly ordenId: { readonly column: 'ordenId' };
                 readonly registradoPorId: { readonly column: 'registradoPorId' };
+                readonly solicitudId: { readonly column: 'solicitudId' };
                 readonly tipo: { readonly column: 'tipo' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
@@ -2597,6 +2631,10 @@ type ContractBase = Omit<
               readonly tecnicoId: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly tipoIngreso: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
             };
             readonly relations: {
@@ -2691,6 +2729,7 @@ type ContractBase = Omit<
                 readonly problemasReportados: { readonly column: 'problemasReportados' };
                 readonly recepcionistaId: { readonly column: 'recepcionistaId' };
                 readonly tecnicoId: { readonly column: 'tecnicoId' };
+                readonly tipoIngreso: { readonly column: 'tipoIngreso' };
               };
             };
           };
@@ -3374,6 +3413,13 @@ type ContractBase = Omit<
               { readonly name: 'OTRO'; readonly value: 'OTRO' },
             ];
           };
+          readonly TipoIngreso: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'DIAGNOSTICO'; readonly value: 'DIAGNOSTICO' },
+              { readonly name: 'SERVICIO_DIRECTO'; readonly value: 'SERVICIO_DIRECTO' },
+            ];
+          };
           readonly TipoMovimiento: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -3381,8 +3427,6 @@ type ContractBase = Omit<
               { readonly name: 'SALIDA'; readonly value: 'SALIDA' },
               { readonly name: 'SALIDA_REPARACION'; readonly value: 'SALIDA_REPARACION' },
               { readonly name: 'SALIDA_VENTA'; readonly value: 'SALIDA_VENTA' },
-              { readonly name: 'AJUSTE_POSITIVO'; readonly value: 'AJUSTE_POSITIVO' },
-              { readonly name: 'AJUSTE_NEGATIVO'; readonly value: 'AJUSTE_NEGATIVO' },
             ];
           };
           readonly TipoPresupuesto: {
@@ -3452,13 +3496,15 @@ type ContractBase = Omit<
             { readonly name: 'SCANNER'; readonly value: 'SCANNER' },
             { readonly name: 'OTRO'; readonly value: 'OTRO' },
           ];
+          readonly TipoIngreso: readonly [
+            { readonly name: 'DIAGNOSTICO'; readonly value: 'DIAGNOSTICO' },
+            { readonly name: 'SERVICIO_DIRECTO'; readonly value: 'SERVICIO_DIRECTO' },
+          ];
           readonly TipoMovimiento: readonly [
             { readonly name: 'ENTRADA'; readonly value: 'ENTRADA' },
             { readonly name: 'SALIDA'; readonly value: 'SALIDA' },
             { readonly name: 'SALIDA_REPARACION'; readonly value: 'SALIDA_REPARACION' },
             { readonly name: 'SALIDA_VENTA'; readonly value: 'SALIDA_VENTA' },
-            { readonly name: 'AJUSTE_POSITIVO'; readonly value: 'AJUSTE_POSITIVO' },
-            { readonly name: 'AJUSTE_NEGATIVO'; readonly value: 'AJUSTE_NEGATIVO' },
           ];
           readonly TipoPresupuesto: readonly [
             { readonly name: 'PRINCIPAL'; readonly value: 'PRINCIPAL' },

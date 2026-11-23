@@ -1,5 +1,5 @@
 import "server-only";
-import { or } from "@prisma/orm-postgres/orm-client";
+import { and, or } from "@prisma/orm-postgres/orm-client";
 import { db } from "@/src/prisma/db";
 
 import type { FiltrosClientes } from "./filters";
@@ -9,22 +9,18 @@ export async function obtenerClientesPaginados({
   page,
   limit,
 }: FiltrosClientes) {
-  const patron = `%${buscar}%`;
 
   function clientesFiltrados(buscar: string) {
     if (!buscar) {
       return db.orm.public.Clientes;
     }
 
-    const patron = `%${buscar}%`;
+    const terminos = buscar.split(/\s+/);
 
-    return db.orm.public.Clientes.where((c) =>
-      or(
-        c.nombre.ilike(patron),
-        c.apellido.ilike(patron),
-        c.telefono.ilike(patron),
-      ),
-    );
+    return db.orm.public.Clientes.where((c) => and(...terminos.map((termino) => {
+      const patron = "%" + termino + "%";
+      return or(c.nombre.ilike(patron), c.apellido.ilike(patron), c.telefono.ilike(patron));
+    })));
   }
 
   const totalResultado = await clientesFiltrados(buscar).aggregate((a) => ({
@@ -48,4 +44,8 @@ export async function obtenerClientesPaginados({
     pagina,
     totalPaginas,
   };
+}
+
+export async function obtenerClientePorId(id: number) {
+  return db.orm.public.Clientes.select("id", "nombre", "apellido", "telefono", "direccion").first({ id });
 }

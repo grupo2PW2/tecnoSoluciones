@@ -35,6 +35,15 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## URL pública de los tickets
+
+`URL_PUBLICA_SEGUIMIENTO` define el dominio que aparece en el ticket y al que apunta su QR. Usa una dirección completa con `http://` o `https://` y el puerto si corresponde.
+
+- Para probar desde un celular en la misma red, define la variable en `.env.local` con la IP de la PC, por ejemplo `URL_PUBLICA_SEGUIMIENTO=http://192.168.1.42:3000`.
+- En Vercel, define la variable en el entorno Production con el dominio público definitivo y realiza un nuevo despliegue.
+
+Si falta la variable o su valor es inválido, el ticket usa la dirección desde la que el personal abrió la aplicación. Vuelve a abrir y reimprimir un ticket si necesitas actualizar su QR.
+
 ## Instalar para seeders
 npm install -D tsx
 

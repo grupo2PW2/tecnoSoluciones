@@ -1,13 +1,20 @@
-export default function DispositivoPage() {
-  return (
-    <div className="flex flex-1 flex-col gap-4 p-4">
-      <h1>Gestion de dispositivos</h1>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
-      </div>
-      <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-    </div>
-  );
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
+import { DispositivosListado } from "@/features/dispositivos/components/dispositivos-listado";
+import { puedeRegistrarIngreso } from "@/features/ordenes/modelo";
+import { getCurrentUser } from "@/lib/auth";
+
+async function DispositivosAutorizados() {
+  const usuario = await getCurrentUser();
+  if (!usuario) redirect("/login");
+  if (!puedeRegistrarIngreso(usuario.rol)) {
+    return <p role="alert" className="p-6">Tu usuario no tiene permiso para gestionar dispositivos.</p>;
+  }
+  return <DispositivosListado />;
+}
+
+export default function DispositivosPage() {
+  return <Suspense fallback={<p role="status" className="p-6">Cargando dispositivos…</p>}>
+    <DispositivosAutorizados />
+  </Suspense>;
 }
